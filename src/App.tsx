@@ -3,6 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LandingPage from "@/features/Landing/LandingPage";
 import AppLayout from "@/layouts/AppLayout";
 import { ThemeProvider } from "@/components/theme-provider";
+import InboxScreen from "@/features/Inbox/InboxScreen";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -13,7 +15,16 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/inbox" element={<AppLayout />} />
+            <Route
+              element={
+                <ProtectedRoute>
+                  <AppLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="/inbox" element={<InboxScreen />} />
+              <Route path="/test" element={<InboxScreen />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

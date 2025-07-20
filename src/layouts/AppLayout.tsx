@@ -8,8 +8,10 @@ export default function AppLayout() {
     <SidebarProvider>
       <AppSidebar />
       <main>
-        <SidebarTrigger />
-        <OptionsHeader />
+        <div className="flex items-center">
+          <SidebarTrigger />
+          <OptionsHeader />
+        </div>
         <Outlet />
       </main>
     </SidebarProvider>

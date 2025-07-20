@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/api/userApi";
+import { useUIStore } from "@/store/UserStore";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 
@@ -10,9 +11,15 @@ function ProtectedRoute({ children }) {
   } = useQuery({
     queryKey: ["userData"],
     queryFn: getCurrentUser,
-    staleTime: 5 * 60 * 1000,
-    retry: false,
   });
+
+  const primary = userData?.gmail_accounts.find(
+    (val) => val.type === "primary"
+  );
+
+  if (primary) {
+    useUIStore.getState().setSelectedEmailAccountId(primary.id);
+  }
 
   let component = null;
   if (isLoading) component = <Loader />;

@@ -1,11 +1,11 @@
-import { useLocation } from "react-router";
+import LabelOptions from "@/features/Inbox/components/LabelOptions";
 
 function InboxScreen() {
-  const location = useLocation();
-  const from = location.state?.from;
-
-  console.log("Redirected from:", from?.pathname);
-  return <div>Inbox</div>;
+  return (
+    <div className="p-4">
+      <LabelOptions />
+    </div>
+  );
 }
 
 export default InboxScreen;

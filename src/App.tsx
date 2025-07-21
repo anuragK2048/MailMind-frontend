@@ -26,8 +26,8 @@ function App() {
               }
             >
               <Route path="/inbox" element={<InboxRedirect />} />
-              <Route path="/inbox/:labelId" element={<InboxScreen />}>
-                <Route path=":emailId" element={<EmailDisplayWrapper />} />
+              <Route path="/inbox/:labelId/:emailId?" element={<InboxScreen />}>
+                {/* <Route path=":emailId" element={<EmailDisplayWrapper />} /> */}
               </Route>
               <Route path="done" element={<DoneScreen />} />
             </Route>

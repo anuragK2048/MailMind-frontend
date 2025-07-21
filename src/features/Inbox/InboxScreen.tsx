@@ -1,17 +1,71 @@
+import AiSectionLayout from "@/features/ai/AiSectionLayout";
+import EmailDisplayWrapper from "@/features/email/EmailDisplay";
 import EmailListDisplay from "@/features/Inbox/components/EmailListDisplay";
-import LabelOptions from "@/features/Inbox/components/LabelOptions";
-import { Outlet } from "react-router";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 
 function InboxScreen() {
+  const { emailId } = useParams();
+  const [staleEmailId, setStaleEmailId] = useState(null);
+  const [showAiSection, setShowAiSection] = useState(true);
+  const [staleShowAiSection, setStaleShowAiSection] = useState(false);
+
+  useEffect(() => {
+    if (emailId) {
+      // When a new email is selected, update the state immediately
+      setStaleEmailId(emailId);
+    } else {
+      // When navigating back, wait for the animation before removing the component
+      const timer = setTimeout(() => {
+        setStaleEmailId(null);
+      }, 1000);
+
+      // ✨ 3. Cleanup function is crucial to prevent bugs if the user navigates quickly
+      return () => clearTimeout(timer);
+    }
+  }, [emailId]);
+  useEffect(() => {
+    if (showAiSection) {
+      // When a new email is selected, update the state immediately
+      setStaleShowAiSection(true);
+    } else {
+      // When navigating back, wait for the animation before removing the component
+      const timer = setTimeout(() => {
+        setStaleShowAiSection(false);
+      }, 1000);
+
+      // ✨ 3. Cleanup function is crucial to prevent bugs if the user navigates quickly
+      return () => clearTimeout(timer);
+    }
+  }, [showAiSection]);
+
   return (
-    <div className="flex h-full flex-col gap-2">
-      <LabelOptions />
-      <div className="flex flex-1 overflow-auto">
-        <div className="flex h-full flex-1 overflow-hidden">
-          <EmailListDisplay />
-        </div>
-        <Outlet />
+    <div className="relative flex h-full w-full overflow-hidden">
+      <div
+        className="absolute right-10 bg-accent"
+        onClick={() => setShowAiSection((cur) => !cur)}
+      >
+        Show ai
       </div>
+      <div
+        className={`flex h-full flex-shrink-0 overflow-auto bg-slate-100 transition-all duration-1000 ease-in-out ${emailId && showAiSection ? "w-0" : emailId ? "w-4/12" : "w-full"} `}
+      >
+        <EmailListDisplay />
+      </div>
+      <div
+        className={`transition-all duration-1000 ease-in-out ${emailId ? "w-8/12" : "w-0"} min-w-0`}
+      >
+        {staleEmailId && <EmailDisplayWrapper emailId={staleEmailId} />}
+      </div>
+      {/* {showAiSection && ( */}
+      <div
+        className={`transition-all duration-1000 ease-in-out ${showAiSection ? "w-4/12" : "w-0"} min-w-0`}
+      >
+        {staleShowAiSection && (
+          <AiSectionLayout showSection={staleShowAiSection} />
+        )}
+      </div>
+      {/* )} */}
     </div>
   );
 }

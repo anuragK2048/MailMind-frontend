@@ -1,4 +1,5 @@
 import { getEmailsByLabel } from "@/api/emailsApi";
+import LabelOptions from "@/features/Inbox/components/LabelOptions";
 import { wrapString } from "@/lib/strings";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
@@ -17,10 +18,13 @@ function EmailListDisplay() {
   });
   if (isLoading) return <Loader />;
   return (
-    <div className="@container flex h-full w-full flex-col gap-2 overflow-x-hidden overflow-y-auto bg-slate-300 text-lg">
-      {emails?.map((val) => (
-        <EmailListItem key={val.id} email={val} />
-      ))}
+    <div className="flex h-full w-full flex-col">
+      <LabelOptions />
+      <div className="@container flex h-full w-full flex-col gap-2 overflow-x-hidden bg-slate-300 text-lg">
+        {emails?.map((val) => (
+          <EmailListItem key={val.id} email={val} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -28,12 +32,13 @@ function EmailListDisplay() {
 export default EmailListDisplay;
 
 function EmailListItem({ email }) {
+  const { labelId } = useParams();
   const navigate = useNavigate();
   return (
     <div
       className="group relative flex bg-slate-200 py-2 hover:border-l-2 hover:border-accent-foreground hover:bg-accent hover:pl-1"
       data-id={email.id}
-      onClick={() => navigate(`${email.id}`)}
+      onClick={() => navigate(`/inbox/${labelId}/${email.id}`)}
     >
       <div className="flex w-11/12 flex-col @5xl:flex-row">
         <div className="truncate pr-12 text-xl font-semibold whitespace-nowrap @5xl:w-2/12 @5xl:pr-4">

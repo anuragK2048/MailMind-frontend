@@ -9,7 +9,9 @@ import {
   Star,
   Trash,
   Archive,
+  ArrowLeft,
 } from "lucide-react";
+import { useLocation, useNavigate } from "react-router";
 // import DOMPurify from "dompurify"; // Import for security
 
 // Helper to format dates, kept from your original code
@@ -27,10 +29,27 @@ const formatDate = (dateString) => {
 };
 
 // The component now receives the full email object from your DB
-function EmailBox({ emailDetails, onStar, onArchive, onTrash }) {
+function EmailBox({
+  emailDetails,
+  onStar,
+  onArchive,
+  onTrash,
+}: {
+  emailDetails: any;
+}) {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [iframeHeight, setIframeHeight] = useState(400);
   const iframeRef = useRef(null);
   const [expanded, setExpanded] = useState(true);
+
+  const removeLastSegment = () => {
+    const segments = pathname.split("/").filter(Boolean); // remove empty strings
+    if (segments.length > 1) {
+      segments.pop(); // remove the last param (like emailId)
+      navigate("/" + segments.join("/"));
+    }
+  };
 
   const updateIframeContent = (content) => {
     const iframe = iframeRef.current;
@@ -102,6 +121,7 @@ function EmailBox({ emailDetails, onStar, onArchive, onTrash }) {
       {/* Email Header */}
       <div className="border-b border-gray-200 p-4">
         <div className="mb-2 flex items-center justify-between">
+          <ArrowLeft onClick={removeLastSegment} />
           <h2 className="truncate pr-4 text-lg font-normal text-gray-800">
             {subject}
           </h2>

@@ -33,3 +33,30 @@ export const getEmailByEmailId = async (emailId) => {
     throw new Error(err);
   }
 };
+
+export const getSelectedEmailsByLabel = async (
+  labelId,
+  emailAccountIds,
+  page,
+  limit
+) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/emails/by-label/${labelId}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emailAccountIds, page, limit }),
+        credentials: "include",
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch email");
+    }
+    const email = await response.json();
+    return email;
+  } catch (err) {
+    console.error(err);
+    throw new Error(err);
+  }
+};

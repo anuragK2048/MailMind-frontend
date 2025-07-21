@@ -14,11 +14,11 @@ function ProtectedRoute({ children }) {
   });
 
   const primary = userData?.gmail_accounts.find(
-    (val) => val.type === "primary"
+    (val) => val.type === "secondary"
   );
 
   if (primary) {
-    useUIStore.getState().setSelectedEmailAccountId(primary.id);
+    useUIStore.getState().setSelectedEmailAccountIds([primary.id]);
   }
 
   let component = null;

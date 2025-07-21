@@ -5,9 +5,9 @@ import { Outlet } from "react-router";
 
 export default function AppLayout() {
   return (
-    <SidebarProvider className="h-full">
+    <SidebarProvider className="flex h-full w-full overflow-hidden">
       <AppSidebar />
-      <main className="flex h-full w-full flex-col bg-slate-200">
+      <main className="flex h-full min-w-0 flex-1 flex-col bg-slate-200">
         <div className="flex h-[60px] shrink-0 items-center">
           <SidebarTrigger />
           <OptionsHeader />

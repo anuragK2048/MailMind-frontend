@@ -1,31 +1,80 @@
-import { getEmailsByLabel } from "@/api/emailsApi";
+import { getEmailsByLabel, getSelectedEmailsByLabel } from "@/api/emailsApi";
 import LabelOptions from "@/features/Inbox/components/LabelOptions";
 import { wrapString } from "@/lib/strings";
-import { useQuery } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
-import {
-  Navigate,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router";
+import { useUIStore } from "@/store/UserStore";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { Loader, LoaderIcon } from "lucide-react";
+import { useCallback, useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useShallow } from "zustand/react/shallow";
 
 function EmailListDisplay() {
   const { labelId } = useParams();
-  const { data: emails, isLoading } = useQuery({
-    queryKey: ["inbox", `${labelId}`],
-    queryFn: () => getEmailsByLabel(labelId),
+  const selectedEmailAccountIds = useUIStore(
+    useShallow((store) => store.selectedEmailAccountIds)
+  );
+
+  const {
+    data,
+    error,
+    fetchNextPage,
+    isLoading,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["inbox", `${labelId}`, JSON.stringify(selectedEmailAccountIds)],
+    queryFn: ({ pageParam }) =>
+      getSelectedEmailsByLabel(labelId, selectedEmailAccountIds, pageParam, 8),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    enabled: !!labelId,
   });
+
+  const observer = useRef<IntersectionObserver>();
+  const lastElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      console.log("called");
+      if (isFetchingNextPage) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          console.log("triggered");
+          fetchNextPage();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [hasNextPage, fetchNextPage, isFetchingNextPage]
+  );
+
+  console.log(data);
+  if (error) {
+    console.error(error);
+  }
+  console.log(isFetchingNextPage);
   if (isLoading) return <Loader />;
+  console.log("rerendered");
   return (
-    <div className="flex h-full w-full flex-col">
-      <LabelOptions />
+    <>
       <div className="@container flex h-full w-full flex-col gap-2 overflow-x-hidden bg-slate-300 text-lg">
-        {emails?.map((val) => (
-          <EmailListItem key={val.id} email={val} />
-        ))}
+        {data?.pages?.map((page, index) =>
+          page.emails.map((val, i) => {
+            const isLastElement =
+              index === data.pages.length - 1 && i === page.emails.length - 1;
+            return (
+              <div ref={isLastElement ? lastElementRef : null} key={val.id}>
+                <EmailListItem email={val} />
+              </div>
+            );
+          })
+        )}
+        {isFetchingNextPage && (
+          <div className="flex justify-center">
+            <LoaderIcon />
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 }
 

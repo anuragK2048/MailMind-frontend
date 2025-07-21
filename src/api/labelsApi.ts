@@ -21,9 +21,13 @@ interface UpdateLabelPayload {
  * Fetches all labels for the current user.
  */
 export const getLabelOptions = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/v1/labels`, {
-    credentials: "include",
-  });
+  const response = await fetch(
+    // `${API_BASE_URL}/api/v1/labels${emailAccountId ? `?accountId=${emailAccountId}` : ""}`, TODO future scope
+    `${API_BASE_URL}/api/v1/labels`,
+    {
+      credentials: "include",
+    }
+  );
   if (!response.ok) {
     throw new Error("Failed to fetch labels");
   }

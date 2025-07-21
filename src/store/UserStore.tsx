@@ -1,22 +1,22 @@
 import { create } from "zustand";
 
 interface UIState {
-  selectedEmailAccountId: string | null;
+  selectedEmailAccountIds: string[];
   selectedAccountId: string | null;
   isComposeOpen: boolean;
-  setSelectedEmailAccountId: (emailId: string | null) => void;
+  setSelectedEmailAccountIds: (emailId: string[]) => void;
   selectAccount: (accountId: string | null) => void;
   openCompose: () => void;
   closeCompose: () => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
-  selectedEmailAccountId: null,
+  selectedEmailAccountIds: [],
   selectedLabel: "All",
   selectedAccountId: null,
   isComposeOpen: false,
-  setSelectedEmailAccountId: (emailId) =>
-    set({ selectedEmailAccountId: emailId }),
+  setSelectedEmailAccountIds: (emailIds) =>
+    set({ selectedEmailAccountIds: emailIds }),
   selectAccount: (accountId) => set({ selectedAccountId: accountId }),
   openCompose: () => set({ isComposeOpen: true }),
   closeCompose: () => set({ isComposeOpen: false }),

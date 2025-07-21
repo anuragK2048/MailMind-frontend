@@ -18,11 +18,12 @@ function LabelOptions() {
   if (error) return <div>{error.message}</div>;
   // if (labels) return <Navigate to={`${labels[0]?.id}`} />;
   return (
-    <div className="flex items-center gap-10 bg-slate-500 text-2xl">
+    <div className="flex w-full items-center gap-10 overflow-x-auto bg-slate-500 text-2xl">
       {labels?.map((val) => (
         <Link
           to={`/inbox/${val.id}${emailId ? `/${emailId}` : ""}`}
           key={val.id}
+          className="py-2 whitespace-nowrap"
         >
           {val.name}
         </Link>

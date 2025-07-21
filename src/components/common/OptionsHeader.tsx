@@ -1,9 +1,16 @@
 import { getCurrentUser } from "@/api/userApi";
-import { useUserStore } from "@/store/UserStore";
+import { useUIStore } from "@/store/UserStore";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 function OptionsHeader() {
+  const { selectedEmailAccountIds, setSelectedEmailAccountIds } = useUIStore(
+    useShallow((store) => ({
+      selectedEmailAccountIds: store.selectedEmailAccountIds,
+      setSelectedEmailAccountIds: store.setSelectedEmailAccountIds,
+    }))
+  );
   const { data: userEmailsData, isLoading } = useQuery({
     queryKey: ["userData"],
     queryFn: getCurrentUser,
@@ -30,7 +37,16 @@ function OptionsHeader() {
   return (
     <div className="ml-10 flex gap-4">
       {userEmailsData?.map((val) => (
-        <div key={val.id}>{val.gmail_address}</div>
+        <div
+          key={val.id}
+          // onClick={() => setSelectedEmailAccountIds([val.id])}
+          onDoubleClick={() =>
+            setSelectedEmailAccountIds([...selectedEmailAccountIds, val.id])
+          }
+          className={`${selectedEmailAccountIds.includes(val.id) ? "bg-amber-300" : ""}`}
+        >
+          {val.gmail_address}
+        </div>
       ))}
     </div>
   );

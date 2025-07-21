@@ -2,7 +2,12 @@ import { getEmailsByLabel } from "@/api/emailsApi";
 import { wrapString } from "@/lib/strings";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import { useParams, useSearchParams } from "react-router";
+import {
+  Navigate,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router";
 
 function EmailListDisplay() {
   const { labelId } = useParams();
@@ -23,10 +28,15 @@ function EmailListDisplay() {
 export default EmailListDisplay;
 
 function EmailListItem({ email }) {
+  const navigate = useNavigate();
   return (
-    <div className="relative flex bg-slate-200 py-2 hover:border-l-2 hover:border-accent-foreground hover:bg-accent hover:pl-1">
+    <div
+      className="group relative flex bg-slate-200 py-2 hover:border-l-2 hover:border-accent-foreground hover:bg-accent hover:pl-1"
+      data-id={email.id}
+      onClick={() => navigate(`${email.id}`)}
+    >
       <div className="flex w-11/12 flex-col @5xl:flex-row">
-        <div className="truncate pr-4 text-xl font-semibold whitespace-nowrap @5xl:w-2/12">
+        <div className="truncate pr-12 text-xl font-semibold whitespace-nowrap @5xl:w-2/12 @5xl:pr-4">
           {email.from_name}
         </div>
         <div className="flex w-10/12 gap-2 text-xl @5xl:pl-2">
@@ -38,7 +48,7 @@ function EmailListItem({ email }) {
           </div>
         </div>
       </div>
-      <div className="absolute right-0 mr-4">
+      <div className="absolute right-0 mr-4 group-hover:mr-5">
         {email.received_date.slice(0, -15)}
       </div>
       <div className="w-3/12 text-left text-xl whitespace-nowrap @5xl:w-1/12"></div>

@@ -7,6 +7,7 @@ import InboxScreen from "@/features/Inbox/InboxScreen";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import DoneScreen from "@/features/done/DoneScreen";
 import InboxRedirect from "@/features/Inbox/InboxRedirect";
+import EmailDisplayWrapper from "@/features/email/EmailDisplay";
 
 const queryClient = new QueryClient();
 
@@ -25,7 +26,9 @@ function App() {
               }
             >
               <Route path="/inbox" element={<InboxRedirect />} />
-              <Route path="/inbox/:labelId" element={<InboxScreen />} />
+              <Route path="/inbox/:labelId" element={<InboxScreen />}>
+                <Route path=":emailId" element={<EmailDisplayWrapper />} />
+              </Route>
               <Route path="done" element={<DoneScreen />} />
             </Route>
           </Routes>

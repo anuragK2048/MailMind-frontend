@@ -2,9 +2,10 @@ import { getLabelOptions } from "@/api/labelsApi";
 import LabelSettingsPopup from "@/features/Inbox/components/LabelSettingsPopup";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import { Link, Navigate } from "react-router";
+import { Link, Navigate, useParams } from "react-router";
 
 function LabelOptions() {
+  const { emailId } = useParams();
   const {
     data: labels,
     isLoading,
@@ -19,7 +20,10 @@ function LabelOptions() {
   return (
     <div className="flex items-center gap-10 bg-slate-500 text-2xl">
       {labels?.map((val) => (
-        <Link to={`/inbox/${val.id}`} key={val.id}>
+        <Link
+          to={`/inbox/${val.id}${emailId ? `/${emailId}` : ""}`}
+          key={val.id}
+        >
           {val.name}
         </Link>
       ))}

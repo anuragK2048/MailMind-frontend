@@ -5,6 +5,8 @@ import AppLayout from "@/layouts/AppLayout";
 import { ThemeProvider } from "@/components/theme-provider";
 import InboxScreen from "@/features/Inbox/InboxScreen";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import DoneScreen from "@/features/done/DoneScreen";
+import InboxRedirect from "@/features/Inbox/InboxRedirect";
 
 const queryClient = new QueryClient();
 
@@ -22,8 +24,9 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route path="/inbox" element={<InboxScreen />} />
-              <Route path="/test" element={<InboxScreen />} />
+              <Route path="/inbox" element={<InboxRedirect />} />
+              <Route path="/inbox/:labelId" element={<InboxScreen />} />
+              <Route path="done" element={<DoneScreen />} />
             </Route>
           </Routes>
         </BrowserRouter>

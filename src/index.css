@@ -54,8 +54,16 @@
   --color-bg-dark: #000000;
 }
 
+@theme {
+  --container-8xl: 88rem;
+}
+
 body {
   min-height: 100vh; /* IMP */
+}
+
+#root {
+  height: 100vh;
 }
 
 /* when light mode on */

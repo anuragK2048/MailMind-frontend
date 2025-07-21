@@ -30,7 +30,7 @@ function ProtectedRoute({ children }) {
       {component ? (
         <div className="flex items-center justify-center">{component}</div>
       ) : (
-        <div>{children}</div>
+        <div className="h-full">{children}</div>
       )}
     </>
   );

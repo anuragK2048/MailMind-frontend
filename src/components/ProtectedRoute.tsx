@@ -14,7 +14,7 @@ function ProtectedRoute({ children }) {
   });
 
   const primary = userData?.gmail_accounts.find(
-    (val) => val.type === "secondary"
+    (val) => val.type === "primary"
   );
 
   if (primary) {

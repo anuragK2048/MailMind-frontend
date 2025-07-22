@@ -28,7 +28,18 @@ function LabelOptions() {
           {val.name}
         </Link>
       ))}
-
+      <Link
+        to={`/inbox/other${emailId ? `/${emailId}` : ""}`}
+        className="py-2 whitespace-nowrap"
+      >
+        Other
+      </Link>
+      <Link
+        to={`/inbox/all${emailId ? `/${emailId}` : ""}`}
+        className="py-2 whitespace-nowrap"
+      >
+        All
+      </Link>
       <LabelSettingsPopup labels={labels} />
     </div>
   );

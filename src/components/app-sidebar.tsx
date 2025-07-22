@@ -14,7 +14,7 @@ const sidebarItems = [
   { name: "Sent", path: "/sent" },
   { name: "Done", path: "/done" },
   { name: "Spam", path: "/spam" },
-  { name: "Trash", path: "/trash" },
+  { name: "Scheduled", path: "/scheduled" },
 ];
 
 export function AppSidebar() {

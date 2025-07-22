@@ -40,13 +40,60 @@ export const getSelectedEmailsByLabel = async (
   page,
   limit
 ) => {
+  const params = new URLSearchParams();
+  params.append("page", page);
+  params.append("limit", limit);
+  params.append("systemView", "INBOX");
+  if (labelId == "all" || labelId == "other") {
+    params.append("inboxCategory", labelId);
+  } else {
+    params.append("inboxCategory", "label");
+  }
+  emailAccountIds?.forEach((element) => {
+    params.append("emailAccountIds", element);
+  });
+  const queryString = params.toString();
+  const inboxCateg = labelId;
+  console.log(queryString);
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/v1/emails/by-label/${labelId}`,
+      `${API_BASE_URL}/api/v1/emails/inbox/${inboxCateg}?${queryString}`,
       {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailAccountIds, page, limit }),
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch email");
+    }
+    const email = await response.json();
+    return email;
+  } catch (err) {
+    console.error(err);
+    throw new Error(err);
+  }
+};
+
+export const getEmailsBySystemLabel = async (
+  systemLabel,
+  emailAccountIds,
+  page,
+  limit
+) => {
+  console.log(page);
+  const params = new URLSearchParams();
+  params.append("page", page);
+  params.append("limit", limit);
+  emailAccountIds?.forEach((element) => {
+    params.append("emailAccountIds", element);
+  });
+  const queryString = params.toString();
+  console.log(queryString);
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/emails/system/${systemLabel}?${queryString}`,
+      {
+        method: "GET",
         credentials: "include",
       }
     );

@@ -1,18 +1,20 @@
+import EmailListDisplay from "@/components/common/EmailListDisplay";
 import AiSectionLayout from "@/features/ai/AiSectionLayout";
 import EmailDisplayWrapper from "@/features/email/EmailDisplay";
-import EmailListDisplay from "@/features/Inbox/components/EmailListDisplay";
 import EmailListLayout from "@/features/Inbox/EmailListLayout";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
-function InboxScreen() {
+function EmailScreen({ systemView, navigateTo }) {
   const { emailId } = useParams();
+  console.log(emailId);
   const [staleEmailId, setStaleEmailId] = useState(null);
   const [showAiSection, setShowAiSection] = useState(false);
   const [staleShowAiSection, setStaleShowAiSection] = useState(false);
 
   useEffect(() => {
     if (emailId) {
+      console.log("hi");
       // When a new email is selected, update the state immediately
       setStaleEmailId(emailId);
     } else {
@@ -52,7 +54,7 @@ function InboxScreen() {
       <div
         className={`flex h-full flex-shrink-0 bg-slate-100 transition-all duration-1000 ease-in-out ${emailId && showAiSection ? "w-0 opacity-20" : emailId ? "w-4/12" : "w-full"} `}
       >
-        <EmailListLayout />
+        <EmailListDisplay systemView={systemView} navigateTo={navigateTo} />
       </div>
       <div
         className={`transition-all duration-1000 ease-in-out ${emailId ? "w-8/12" : "w-0 opacity-20"} min-w-0`}
@@ -72,4 +74,4 @@ function InboxScreen() {
   );
 }
 
-export default InboxScreen;
+export default EmailScreen;

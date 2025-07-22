@@ -1,4 +1,8 @@
-import { getEmailsByLabel, getSelectedEmailsByLabel } from "@/api/emailsApi";
+import {
+  getEmailsByLabel,
+  getEmailsBySystemLabel,
+  getSelectedEmailsByLabel,
+} from "@/api/emailsApi";
 import LabelOptions from "@/features/Inbox/components/LabelOptions";
 import { wrapString } from "@/lib/strings";
 import { useUIStore } from "@/store/UserStore";
@@ -8,12 +12,32 @@ import { useCallback, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useShallow } from "zustand/react/shallow";
 
-function EmailListDisplay() {
-  const { labelId } = useParams();
+function EmailListDisplay({ userLabelId, systemView, navigateTo }) {
   const selectedEmailAccountIds = useUIStore(
     useShallow((store) => store.selectedEmailAccountIds)
   );
-  console.log(selectedEmailAccountIds);
+
+  const queryFn = ({ pageParam = 1 }) => {
+    if (userLabelId) {
+      return getSelectedEmailsByLabel(
+        userLabelId,
+        selectedEmailAccountIds,
+        pageParam,
+        8
+      );
+    }
+    if (systemView) {
+      console.log("clled");
+      return getEmailsBySystemLabel(
+        systemView,
+        selectedEmailAccountIds,
+        pageParam,
+        8
+      );
+    }
+    // Return a promise that resolves to an empty structure if no filter is provided
+    return Promise.resolve({ emails: [], nextPage: undefined });
+  };
 
   const {
     data,
@@ -23,12 +47,14 @@ function EmailListDisplay() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["inbox", `${labelId}`, JSON.stringify(selectedEmailAccountIds)],
-    queryFn: ({ pageParam }) =>
-      getSelectedEmailsByLabel(labelId, selectedEmailAccountIds, pageParam, 8),
+    queryKey: [
+      "emails",
+      { systemView, userLabelId, accounts: selectedEmailAccountIds },
+    ],
+    queryFn: queryFn,
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
-    enabled: !!labelId,
+    enabled: !!systemView,
     retry: false,
   });
 
@@ -64,7 +90,7 @@ function EmailListDisplay() {
               index === data.pages.length - 1 && i === page.emails.length - 1;
             return (
               <div ref={isLastElement ? lastElementRef : null} key={val.id}>
-                <EmailListItem email={val} />
+                <EmailListItem email={val} navigateTo={navigateTo} />
               </div>
             );
           })
@@ -81,7 +107,7 @@ function EmailListDisplay() {
 
 export default EmailListDisplay;
 
-function EmailListItem({ email }) {
+function EmailListItem({ email, navigateTo }) {
   // console.log(email);
   const { labelId } = useParams();
   const navigate = useNavigate();
@@ -89,7 +115,7 @@ function EmailListItem({ email }) {
     <div
       className="group relative flex overflow-visible bg-slate-200 py-2 hover:border-l-2 hover:border-accent-foreground hover:bg-accent hover:pl-1"
       data-id={email.id}
-      onClick={() => navigate(`/inbox/${labelId}/${email.id}`)}
+      onClick={() => navigate(`${navigateTo}/${email.id}`)}
     >
       <div className="flex w-11/12 flex-col @5xl:flex-row">
         <div className="flex gap-3 @5xl:w-3/12">

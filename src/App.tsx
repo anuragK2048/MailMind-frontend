@@ -5,9 +5,10 @@ import AppLayout from "@/layouts/AppLayout";
 import { ThemeProvider } from "@/components/theme-provider";
 import InboxScreen from "@/features/Inbox/InboxScreen";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import DoneScreen from "@/features/done/DoneScreen";
+import EmailScreen from "@/features/done/EmailScreen";
 import InboxRedirect from "@/features/Inbox/InboxRedirect";
 import EmailDisplayWrapper from "@/features/email/EmailDisplay";
+import SchedulerComingSoon from "@/components/common/ComingSoonScreen";
 
 const queryClient = new QueryClient();
 
@@ -29,7 +30,37 @@ function App() {
               <Route path="/inbox/:labelId/:emailId?" element={<InboxScreen />}>
                 {/* <Route path=":emailId" element={<EmailDisplayWrapper />} /> */}
               </Route>
-              <Route path="done" element={<DoneScreen />} />
+              <Route
+                path="starred/:emailId?"
+                element={
+                  <EmailScreen systemView={"STARRED"} navigateTo={`/starred`} />
+                }
+              />
+              <Route
+                path="drafts/:emailId?"
+                element={
+                  <EmailScreen systemView={"DRAFT"} navigateTo={`/drafts`} />
+                }
+              />
+              <Route
+                path="sent/:emailId?"
+                element={
+                  <EmailScreen systemView={"SENT"} navigateTo={`/sent`} />
+                }
+              />
+              <Route
+                path="done/:emailId?"
+                element={
+                  <EmailScreen systemView={"UNREAD"} navigateTo={`/done`} />
+                }
+              />
+              <Route
+                path="spam/:emailId?"
+                element={
+                  <EmailScreen systemView={"SPAM"} navigateTo={`/done`} />
+                }
+              />
+              <Route path="/scheduled" element={<SchedulerComingSoon />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -5,9 +5,8 @@ import EmailListLayout from "@/features/Inbox/EmailListLayout";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
-function EmailScreen({ systemView, navigateTo }) {
+function EmailScreen({ children }) {
   const { emailId } = useParams();
-  console.log(emailId);
   const [staleEmailId, setStaleEmailId] = useState(null);
   const [showAiSection, setShowAiSection] = useState(false);
   const [staleShowAiSection, setStaleShowAiSection] = useState(false);
@@ -54,14 +53,13 @@ function EmailScreen({ systemView, navigateTo }) {
       <div
         className={`flex h-full flex-shrink-0 bg-slate-100 transition-all duration-1000 ease-in-out ${emailId && showAiSection ? "w-0 opacity-20" : emailId ? "w-4/12" : "w-full"} `}
       >
-        <EmailListDisplay systemView={systemView} navigateTo={navigateTo} />
+        {children}
       </div>
       <div
         className={`transition-all duration-1000 ease-in-out ${emailId ? "w-8/12" : "w-0 opacity-20"} min-w-0`}
       >
         {staleEmailId && <EmailDisplayWrapper emailId={staleEmailId} />}
       </div>
-      {/* {showAiSection && ( */}
       <div
         className={`transition-all duration-1000 ease-in-out ${showAiSection ? "w-4/12" : "w-0 opacity-20"} min-w-0`}
       >

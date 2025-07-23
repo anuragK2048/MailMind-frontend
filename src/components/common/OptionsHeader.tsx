@@ -16,7 +16,6 @@ function OptionsHeader() {
     queryFn: getCurrentUser,
     select: (user) => user.gmail_accounts,
   });
-  console.log(userEmailsData);
 
   useEffect(() => {
     async function createLabel() {
@@ -28,8 +27,6 @@ function OptionsHeader() {
         credentials: "include",
         // body: JSON.stringify({ name: "Test Label 2", color: "#ffffff" }),
       });
-      const response = await res.json();
-      console.log(response);
     }
     createLabel();
   }, []);

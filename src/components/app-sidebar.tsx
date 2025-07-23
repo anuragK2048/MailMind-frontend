@@ -17,6 +17,15 @@ const sidebarItems = [
   { name: "Scheduled", path: "/scheduled" },
 ];
 
+async function handleLogout() {
+  const res = await fetch("http://localhost:3000/api/v1/auth/logout", {
+    method: "POST",
+    credentials: "include",
+  });
+  const result = await res.json();
+  console.log(result);
+}
+
 export function AppSidebar() {
   return (
     <Sidebar>
@@ -48,6 +57,7 @@ export function AppSidebar() {
           >
             Add Account +
           </Button>
+          <Button onClick={handleLogout}>Logout</Button>
         </div>
       </div>
     </Sidebar>

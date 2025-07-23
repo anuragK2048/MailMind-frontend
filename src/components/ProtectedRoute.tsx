@@ -2,8 +2,13 @@ import { getCurrentUser } from "@/api/userApi";
 import { useUIStore } from "@/store/UserStore";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
+import { useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 function ProtectedRoute({ children }) {
+  const setSelectedEmailAccountIds = useUIStore(
+    useShallow((store) => store.setSelectedEmailAccountIds)
+  );
   const {
     data: userData,
     isLoading,
@@ -13,13 +18,14 @@ function ProtectedRoute({ children }) {
     queryFn: getCurrentUser,
   });
 
-  const primary = userData?.gmail_accounts.find(
-    (val) => val.type === "primary"
-  );
-
-  if (primary) {
-    useUIStore.getState().setSelectedEmailAccountIds([primary.id]);
-  }
+  useEffect(() => {
+    const primary = userData?.gmail_accounts.find(
+      (val) => val.type === "primary"
+    );
+    if (primary) {
+      setSelectedEmailAccountIds([primary.id]);
+    }
+  }, [userData, setSelectedEmailAccountIds]);
 
   let component = null;
   if (isLoading) component = <Loader />;

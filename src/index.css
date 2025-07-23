@@ -154,3 +154,34 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes glitch-flicker {
+  0% {
+    opacity: 0.1;
+    transform: translate(-2px, 1px);
+  }
+  2% {
+    opacity: 1;
+    transform: translate(2px, -1px);
+  }
+  4% {
+    opacity: 0.1;
+    transform: translate(-1px, 2px);
+  }
+  6% {
+    opacity: 0.5;
+    transform: translate(1px, -2px);
+  }
+  8% {
+    opacity: 0.2;
+    transform: translate(-2px, 1px);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(2px, 1px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}

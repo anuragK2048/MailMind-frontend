@@ -4,6 +4,8 @@ import {
   getSelectedEmailsByLabel,
 } from "@/api/emailsApi";
 import LabelOptions from "@/features/Inbox/components/LabelOptions";
+import { useEmailMutations } from "@/hooks/useEmailMutations";
+import useSystemView from "@/hooks/useSystemView";
 import { wrapString } from "@/lib/strings";
 import { useUIStore } from "@/store/UserStore";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -12,27 +14,28 @@ import { useCallback, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useShallow } from "zustand/react/shallow";
 
-function EmailListDisplay({ userLabelId, systemView, navigateTo }) {
+function EmailListDisplay() {
+  const { systemView, navigateTo } = useSystemView();
+  const { labelId } = useParams();
   const selectedEmailAccountIds = useUIStore(
     useShallow((store) => store.selectedEmailAccountIds)
   );
 
   const queryFn = ({ pageParam = 1 }) => {
-    if (userLabelId) {
+    if (labelId) {
       return getSelectedEmailsByLabel(
-        userLabelId,
+        labelId,
         selectedEmailAccountIds,
         pageParam,
-        8
+        10
       );
     }
     if (systemView) {
-      console.log("clled");
       return getEmailsBySystemLabel(
         systemView,
         selectedEmailAccountIds,
         pageParam,
-        8
+        10
       );
     }
     // Return a promise that resolves to an empty structure if no filter is provided
@@ -49,18 +52,14 @@ function EmailListDisplay({ userLabelId, systemView, navigateTo }) {
   } = useInfiniteQuery({
     queryKey: [
       "emails",
-      { systemView, userLabelId, accounts: selectedEmailAccountIds },
+      { systemView, labelId, accounts: selectedEmailAccountIds },
     ],
     queryFn: queryFn,
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
-    enabled: !!systemView,
+    enabled: !!((systemView || labelId) && selectedEmailAccountIds.length),
     retry: false,
   });
-
-  console.log(data);
-  // if (data) {
-  // }
 
   const observer = useRef<IntersectionObserver>();
   const lastElementRef = useCallback(
@@ -90,7 +89,11 @@ function EmailListDisplay({ userLabelId, systemView, navigateTo }) {
               index === data.pages.length - 1 && i === page.emails.length - 1;
             return (
               <div ref={isLastElement ? lastElementRef : null} key={val.id}>
-                <EmailListItem email={val} navigateTo={navigateTo} />
+                <EmailListItem
+                  email={val}
+                  navigateTo={navigateTo}
+                  selectedEmailAccountIds={selectedEmailAccountIds}
+                />
               </div>
             );
           })
@@ -107,21 +110,34 @@ function EmailListDisplay({ userLabelId, systemView, navigateTo }) {
 
 export default EmailListDisplay;
 
-function EmailListItem({ email, navigateTo }) {
+function EmailListItem({ email, navigateTo, selectedEmailAccountIds }) {
+  const { systemView } = useSystemView();
   // console.log(email);
   const { labelId } = useParams();
   const navigate = useNavigate();
+  const listQueryKey = [
+    "emails",
+    { systemView, labelId, accounts: selectedEmailAccountIds },
+  ];
+  const { toggleStarred, toggleUnread, archiveEmail, isPending } =
+    useEmailMutations(listQueryKey);
   return (
     <div
       className="group relative flex overflow-visible bg-slate-200 py-2 hover:border-l-2 hover:border-accent-foreground hover:bg-accent hover:pl-1"
       data-id={email.id}
-      onClick={() => navigate(`${navigateTo}/${email.id}`)}
+      onClick={() =>
+        navigate(`${navigateTo}${labelId ? `/${labelId}` : ""}/${email.id}`)
+      }
     >
       <div className="flex w-11/12 flex-col @5xl:flex-row">
         <div className="flex gap-3 @5xl:w-3/12">
           <div>{email.gmail_account.gmail_address.slice(0, 2)}</div>
           <div className="flex items-center">
-            <Circle size={10} />
+            <Circle
+              size={10}
+              onClick={() => toggleUnread(email)}
+              fill={email?.is_unread ? "blue" : "none"}
+            />
           </div>
           <div className="truncate pr-12 text-xl font-semibold whitespace-nowrap @5xl:pr-4">
             {email.from_name}
@@ -129,10 +145,10 @@ function EmailListItem({ email, navigateTo }) {
         </div>
         <div className="flex w-9/12 gap-2 text-xl @5xl:pl-2">
           <div className="truncate font-medium whitespace-nowrap @4xl:overflow-visible @4xl:text-clip">
-            {email.subject}
+            {email?.subject}
           </div>
           <div className="ml-4 hidden truncate pr-8 font-light whitespace-nowrap @5xl:block">
-            {wrapString(email.snippet, 110 - email.subject.length)}
+            {wrapString(email?.snippet, 110 - email.subject?.length)}
           </div>
         </div>
       </div>
@@ -140,15 +156,18 @@ function EmailListItem({ email, navigateTo }) {
         <div className="group-hover:hidden">
           {email.received_date.slice(0, -15)}
         </div>
-        <div className="hidden gap-3 group-hover:flex">
-          <div
-            className="hover:bg-amber-100"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Check />
+        <div
+          className="hidden gap-3 group-hover:flex"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="hover:bg-amber-100">
+            <Check onClick={() => archiveEmail(email)} />
           </div>
           <div className="hover:bg-amber-100">
-            <Star />
+            <Star
+              fill={email?.is_starred ? "yellow" : "none"}
+              onClick={() => toggleStarred(email)}
+            />
           </div>
           <div className="hover:bg-amber-100">
             <Clock />

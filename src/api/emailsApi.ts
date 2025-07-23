@@ -54,7 +54,6 @@ export const getSelectedEmailsByLabel = async (
   });
   const queryString = params.toString();
   const inboxCateg = labelId;
-  console.log(queryString);
   try {
     const response = await fetch(
       `${API_BASE_URL}/api/v1/emails/inbox/${inboxCateg}?${queryString}`,
@@ -106,4 +105,33 @@ export const getEmailsBySystemLabel = async (
     console.error(err);
     throw new Error(err);
   }
+};
+
+interface ModifyLabelsPayload {
+  emailId: string;
+  addLabelIds?: string[];
+  removeLabelIds?: string[];
+}
+
+export const updateEmailLabels = async ({
+  emailId,
+  addLabelIds,
+  removeLabelIds,
+}: ModifyLabelsPayload) => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/emails/${emailId}/labels`,
+    {
+      method: "PATCH", // Using PATCH for partial updates
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ addLabelIds, removeLabelIds }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to update email labels");
+  }
+
+  return response.json();
 };

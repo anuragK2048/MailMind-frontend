@@ -1,5 +1,6 @@
 import { getEmailsByLabel, getSelectedEmailsByLabel } from "@/api/emailsApi";
 import LabelOptions from "@/features/Inbox/components/LabelOptions";
+import { useEmailMutations } from "@/hooks/useEmailMutations";
 import { wrapString } from "@/lib/strings";
 import { useUIStore } from "@/store/UserStore";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -23,7 +24,7 @@ function EmailListDisplay() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["inbox", `${labelId}`, JSON.stringify(selectedEmailAccountIds)],
+    queryKey: ["inbox", `${labelId}`, selectedEmailAccountIds],
     queryFn: ({ pageParam }) =>
       getSelectedEmailsByLabel(labelId, selectedEmailAccountIds, pageParam, 8),
     initialPageParam: 1,
@@ -32,9 +33,10 @@ function EmailListDisplay() {
     retry: false,
   });
 
+  const listQueryKey = ["inbox", `${labelId}`, selectedEmailAccountIds];
+  const { toggleStarred } = useEmailMutations(listQueryKey);
+
   console.log(data);
-  // if (data) {
-  // }
 
   const observer = useRef<IntersectionObserver>();
   const lastElementRef = useCallback(
@@ -64,7 +66,7 @@ function EmailListDisplay() {
               index === data.pages.length - 1 && i === page.emails.length - 1;
             return (
               <div ref={isLastElement ? lastElementRef : null} key={val.id}>
-                <EmailListItem email={val} />
+                <EmailListItem email={val} toggleStarred={toggleStarred} />
               </div>
             );
           })
@@ -81,7 +83,7 @@ function EmailListDisplay() {
 
 export default EmailListDisplay;
 
-function EmailListItem({ email }) {
+function EmailListItem({ email, toggleStarred }) {
   // console.log(email);
   const { labelId } = useParams();
   const navigate = useNavigate();
@@ -89,7 +91,9 @@ function EmailListItem({ email }) {
     <div
       className="group relative flex overflow-visible bg-slate-200 py-2 hover:border-l-2 hover:border-accent-foreground hover:bg-accent hover:pl-1"
       data-id={email.id}
-      onClick={() => navigate(`/inbox/${labelId}/${email.id}`)}
+      onClick={() =>
+        navigate(`/inbox${labelId ? `/${labelId}` : ""}/${email.id}`)
+      }
     >
       <div className="flex w-11/12 flex-col @5xl:flex-row">
         <div className="flex gap-3 @5xl:w-3/12">
@@ -122,7 +126,10 @@ function EmailListItem({ email }) {
             <Check />
           </div>
           <div className="hover:bg-amber-100">
-            <Star />
+            <Star
+              fill={email?.is_starred ? "yellow" : "none"}
+              onClick={() => toggleStarred(email)}
+            />
           </div>
           <div className="hover:bg-amber-100">
             <Clock />

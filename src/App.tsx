@@ -3,12 +3,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LandingPage from "@/features/Landing/LandingPage";
 import AppLayout from "@/layouts/AppLayout";
 import { ThemeProvider } from "@/components/theme-provider";
-import InboxScreen from "@/features/Inbox/InboxScreen";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import EmailScreen from "@/features/done/EmailScreen";
+import EmailScreen from "@/components/common/EmailScreen";
 import InboxRedirect from "@/features/Inbox/InboxRedirect";
-import EmailDisplayWrapper from "@/features/email/EmailDisplay";
 import SchedulerComingSoon from "@/components/common/ComingSoonScreen";
+import EmailListDisplay from "@/components/common/EmailListDisplay";
+import EmailListLayout from "@/features/Inbox/EmailListLayout";
 
 const queryClient = new QueryClient();
 
@@ -27,37 +27,54 @@ function App() {
               }
             >
               <Route path="/inbox" element={<InboxRedirect />} />
-              <Route path="/inbox/:labelId/:emailId?" element={<InboxScreen />}>
+              <Route
+                path="/inbox/:labelId/:emailId?"
+                element={
+                  <EmailScreen>
+                    <EmailListLayout />
+                  </EmailScreen>
+                }
+              >
                 {/* <Route path=":emailId" element={<EmailDisplayWrapper />} /> */}
               </Route>
               <Route
                 path="starred/:emailId?"
                 element={
-                  <EmailScreen systemView={"STARRED"} navigateTo={`/starred`} />
+                  <EmailScreen>
+                    <EmailListDisplay />
+                  </EmailScreen>
                 }
               />
               <Route
                 path="drafts/:emailId?"
                 element={
-                  <EmailScreen systemView={"DRAFT"} navigateTo={`/drafts`} />
+                  <EmailScreen>
+                    <EmailListDisplay />
+                  </EmailScreen>
                 }
               />
               <Route
                 path="sent/:emailId?"
                 element={
-                  <EmailScreen systemView={"SENT"} navigateTo={`/sent`} />
+                  <EmailScreen>
+                    <EmailListDisplay />
+                  </EmailScreen>
                 }
               />
               <Route
                 path="done/:emailId?"
                 element={
-                  <EmailScreen systemView={"UNREAD"} navigateTo={`/done`} />
+                  <EmailScreen>
+                    <EmailListDisplay />
+                  </EmailScreen>
                 }
               />
               <Route
                 path="spam/:emailId?"
                 element={
-                  <EmailScreen systemView={"SPAM"} navigateTo={`/done`} />
+                  <EmailScreen>
+                    <EmailListDisplay />
+                  </EmailScreen>
                 }
               />
               <Route path="/scheduled" element={<SchedulerComingSoon />} />

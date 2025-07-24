@@ -34,9 +34,9 @@ function LabelOptions() {
   if (isLoading) return <Loader />;
   if (error) return <div>{error.message}</div>;
   const allLabelOptions = [
+    { id: "all", name: "All" },
     ...(labels || []),
     { id: "other", name: "Other" },
-    { id: "all", name: "All" },
   ];
   return (
     <div className="@container">
@@ -45,14 +45,14 @@ function LabelOptions() {
           <Link
             to={`/inbox/${val.id}${emailId ? `/${emailId}` : ""}`}
             key={val.id}
-            className={`${labelId === val.id ? "text-accent-foreground" : "text-accent-foreground/50"} py-2 whitespace-nowrap`}
+            className={`${labelId === val.id ? "text-accent-foreground" : "text-accent-foreground/50"} py-2 whitespace-nowrap hover:text-accent-foreground`}
           >
             {val.name}
           </Link>
         ))}
         <LabelSettingsPopup labels={labels} />
       </div>
-      <div className="flex px-2 @5xl:hidden">
+      <div className="mt-2 flex px-2 @5xl:hidden">
         <Select
           // The value is ALWAYS the string ID from the URL param
           value={labelId}

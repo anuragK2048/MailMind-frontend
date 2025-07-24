@@ -4,6 +4,8 @@ interface UIState {
   selectedEmailAccountIds: string[];
   selectedAccountId: string | null;
   isComposeOpen: boolean;
+  showUnread: boolean;
+  setShowUnread: (val: boolean) => void;
   setSelectedEmailAccountIds: (emailId: string[]) => void;
   selectAccount: (accountId: string | null) => void;
   openCompose: () => void;
@@ -16,6 +18,8 @@ export const useUIStore = create<UIState>((set) => ({
   selectedAccountId: null,
   isComposeOpen: false,
   userData: undefined,
+  showUnread: false,
+  setShowUnread: (val) => set({ showUnread: val }),
   setUserData: (userData) => set({ userData }),
   setSelectedEmailAccountIds: (emailIds) =>
     set({ selectedEmailAccountIds: emailIds }),

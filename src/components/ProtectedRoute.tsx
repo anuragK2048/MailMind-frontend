@@ -28,7 +28,6 @@ function ProtectedRoute({ children }) {
     if (primary) {
       setSelectedEmailAccountIds([primary.id]);
     }
-    console.log(userData);
     setUserData(userData);
   }, [userData, setSelectedEmailAccountIds, setUserData]);
 

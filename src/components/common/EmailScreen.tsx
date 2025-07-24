@@ -44,19 +44,19 @@ function EmailScreen({ children }) {
 
   return (
     <div className="relative flex h-full w-full">
-      <div
+      {/* <div
         className="absolute -right-10 bg-accent"
         onClick={() => setShowAiSection((cur) => !cur)}
       >
         Show ai
-      </div>
+      </div> */}
       <div
         className={`flex h-full flex-shrink-0 transition-all duration-1000 ease-in-out ${emailId && showAiSection ? "w-0 opacity-20" : emailId ? "w-0 lg:w-4/12" : "w-full"} `}
       >
         {children}
       </div>
       <div
-        className={`transition-all duration-1000 ease-in-out ${emailId && !showAiSection ? "w-full" : `w-0 ${emailId ? "" : "opacity-20"}`} min-w-0 lg:w-8/12`}
+        className={`transition-all duration-1000 ease-in-out ${emailId && !showAiSection ? "w-full" : `w-0 ${emailId ? "" : "opacity-20"}`} min-w-0 rounded-sm bg-accent/0 lg:w-8/12 lg:px-4`}
       >
         {staleEmailId && <EmailDisplayWrapper emailId={staleEmailId} />}
       </div>

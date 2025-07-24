@@ -19,8 +19,11 @@ import { useShallow } from "zustand/react/shallow";
 function EmailListDisplay() {
   const { systemView, navigateTo } = useSystemView();
   const { labelId } = useParams();
-  const selectedEmailAccountIds = useUIStore(
-    useShallow((store) => store.selectedEmailAccountIds)
+  const { selectedEmailAccountIds, showUnread } = useUIStore(
+    useShallow((store) => ({
+      selectedEmailAccountIds: store.selectedEmailAccountIds,
+      showUnread: store.showUnread,
+    }))
   );
 
   const queryFn = ({ pageParam = 1 }) => {
@@ -86,19 +89,21 @@ function EmailListDisplay() {
     <>
       <div className="@container flex h-full w-full flex-col gap-2 overflow-y-auto bg-background pt-4 text-lg">
         {data?.pages?.map((page, index) =>
-          page.emails.map((val, i) => {
-            const isLastElement =
-              index === data.pages.length - 1 && i === page.emails.length - 1;
-            return (
-              <div ref={isLastElement ? lastElementRef : null} key={val.id}>
-                <EmailListItem
-                  email={val}
-                  navigateTo={navigateTo}
-                  selectedEmailAccountIds={selectedEmailAccountIds}
-                />
-              </div>
-            );
-          })
+          page.emails
+            // .filter((val) => val.is_unread === showUnread)
+            .map((val, i) => {
+              const isLastElement =
+                index === data.pages.length - 1 && i === page.emails.length - 1;
+              return (
+                <div ref={isLastElement ? lastElementRef : null} key={val.id}>
+                  <EmailListItem
+                    email={val}
+                    navigateTo={navigateTo}
+                    selectedEmailAccountIds={selectedEmailAccountIds}
+                  />
+                </div>
+              );
+            })
         )}
         {isFetchingNextPage && (
           <div className="flex justify-center">
@@ -122,7 +127,7 @@ function EmailListItem({ email, navigateTo, selectedEmailAccountIds }) {
     "emails",
     { systemView, labelId, accounts: selectedEmailAccountIds },
   ];
-  const { toggleStarred, toggleUnread, archiveEmail, isPending } =
+  const { toggleStarred, archiveEmail, isPending } =
     useEmailMutations(listQueryKey);
   return (
     <div

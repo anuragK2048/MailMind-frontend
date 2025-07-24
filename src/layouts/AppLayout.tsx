@@ -20,7 +20,7 @@ export default function AppLayout() {
     <SidebarProvider className="flex h-full w-full">
       <AppSidebar />
       <main className="flex h-full min-w-0 flex-1 flex-col">
-        <div className="flex h-[70px] shrink-0 items-end px-4 md:px-12 lg:px-20">
+        <div className="mb-2 flex h-[70px] shrink-0 items-end px-4 md:px-12 lg:px-20">
           {/* <SidebarTrigger /> */}
           <OptionsHeader />
         </div>

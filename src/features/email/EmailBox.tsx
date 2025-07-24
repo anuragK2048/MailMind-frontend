@@ -10,6 +10,8 @@ import {
   Trash,
   Archive,
   ArrowLeft,
+  Check,
+  Clock,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 // import DOMPurify from "dompurify"; // Import for security
@@ -42,14 +44,6 @@ function EmailBox({
   const [iframeHeight, setIframeHeight] = useState(400);
   const iframeRef = useRef(null);
   const [expanded, setExpanded] = useState(true);
-
-  const removeLastSegment = () => {
-    const segments = pathname.split("/").filter(Boolean); // remove empty strings
-    if (segments.length > 1) {
-      segments.pop(); // remove the last param (like emailId)
-      navigate("/" + segments.join("/"));
-    }
-  };
 
   const updateIframeContent = (content) => {
     const iframe = iframeRef.current;
@@ -117,39 +111,9 @@ function EmailBox({
   const toggleExpand = () => setExpanded(!expanded);
 
   return (
-    <div className="flex h-full flex-grow flex-col rounded-lg shadow-md">
-      {/* Email Header */}
-      <div className="border-b border-gray-200 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <ArrowLeft onClick={removeLastSegment} />
-          <h2 className="truncate pr-4 text-lg font-normal text-gray-800">
-            {subject}
-          </h2>
-          <div className="flex items-center space-x-1 text-gray-500">
-            {/* These buttons would call functions passed as props */}
-            <button
-              onClick={() => onArchive(id)}
-              className="rounded-full p-2 hover:bg-gray-100"
-              title="Archive"
-            >
-              <Archive size={18} />
-            </button>
-            <button
-              onClick={() => onTrash(id)}
-              className="rounded-full p-2 hover:bg-gray-100"
-              title="Delete"
-            >
-              <Trash size={18} />
-            </button>
-            <button className="rounded-full p-2 hover:bg-gray-100" title="More">
-              <MoreHorizontal size={18} />
-            </button>
-          </div>
-        </div>
-      </div>
-
+    <div className="flex max-h-full flex-grow flex-col">
       {/* Email Body & Details */}
-      <div className="flex-grow overflow-y-auto p-4">
+      <div className="flex flex-col overflow-hidden p-4 pt-2">
         <div className="mb-6 flex items-start justify-between">
           <div className="flex items-center">
             {/* Avatar */}
@@ -159,18 +123,18 @@ function EmailBox({
             {/* Sender/Recipient Info */}
             <div className="flex flex-col">
               <div className="flex items-center">
-                <span className="font-semibold text-gray-800">
+                <span className="font-semibold text-primary">
                   {from_name || "Unknown Sender"}
                 </span>
-                <span className="ml-2 text-sm text-gray-500">
+                <span className="ml-2 text-sm text-muted-foreground">
                   {from_address}
                 </span>
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-muted-foreground">
                 to {to_addresses?.join(", ") || "undisclosed-recipients"}
                 <button
                   onClick={toggleExpand}
-                  className="ml-2 inline-block align-middle text-gray-500"
+                  className="ml-2 inline-block align-middle text-muted-foreground"
                 >
                   {expanded ? (
                     <ChevronUp size={16} />
@@ -181,47 +145,39 @@ function EmailBox({
               </div>
             </div>
           </div>
-          <div className="flex items-center pl-2 text-xs whitespace-nowrap text-gray-600">
+          <div className="flex items-center pl-2 text-xs whitespace-nowrap text-muted-foreground">
             {formatDate(sent_date)}
-            <button
-              onClick={() => onStar(id, !is_starred)}
-              className="ml-3 text-gray-400 hover:text-yellow-500"
-              title={is_starred ? "Unstar" : "Star"}
-            >
-              <Star
-                size={16}
-                className={is_starred ? "fill-current text-yellow-400" : ""}
-              />
-            </button>
           </div>
         </div>
 
-        {/* Collapsible Email Content */}
-        {expanded && (
-          <div className="overflow-hidden rounded-lg border border-gray-300 bg-white p-8 pb-0">
-            <iframe
-              ref={iframeRef}
-              className="w-full border-none"
-              style={{ height: `${iframeHeight + 10}px` }}
-              sandbox="allow-same-origin"
-              title="Email Content"
-            />
-          </div>
-        )}
+        <div className="w-full overflow-auto rounded-lg border border-gray-300">
+          {/* Collapsible Email Content */}
+          {expanded && (
+            <div className="bg-white p-8 pb-0">
+              <iframe
+                ref={iframeRef}
+                className="w-full border-none"
+                style={{ height: `${iframeHeight + 10}px` }}
+                sandbox="allow-same-origin"
+                title="Email Content"
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Action Buttons Footer */}
-      <div className="mt-auto border-t border-gray-200 p-4">
-        <div className="flex space-x-2">
-          <button className="flex items-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:shadow-sm">
+      <div className="flex justify-end border-t border-accent-foreground/20 p-4">
+        <div className="flex space-x-2 text-muted-foreground">
+          <button className="flex cursor-pointer items-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-muted hover:text-primary hover:shadow-sm">
             <Reply size={16} className="mr-2" />
             Reply
           </button>
-          <button className="flex items-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:shadow-sm">
+          <button className="flex cursor-pointer items-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-muted hover:text-primary hover:shadow-sm">
             <ReplyAll size={16} className="mr-2" />
             Reply all
           </button>
-          <button className="flex items-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:shadow-sm">
+          <button className="flex cursor-pointer items-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-muted hover:text-primary hover:shadow-sm">
             <Forward size={16} className="mr-2" />
             Forward
           </button>

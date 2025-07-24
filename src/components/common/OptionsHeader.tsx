@@ -4,7 +4,7 @@ import TestComp from "@/components/common/TestComp";
 import { useUIStore } from "@/store/UserStore";
 import { useQuery } from "@tanstack/react-query";
 import { Pen, Search, ToggleLeft } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 function OptionsHeader() {
@@ -50,7 +50,7 @@ function OptionsHeader() {
       ))} */}
       <Avatars />
       <div className="flex items-center justify-center gap-4">
-        <ToggleLeft />
+        <UnreadToggle />
         <Search />
         <Pen />
       </div>
@@ -59,3 +59,42 @@ function OptionsHeader() {
 }
 
 export default OptionsHeader;
+
+import { Switch } from "@/components/ui/switch";
+export function SwitchDemo() {
+  return (
+    <div className="flex items-center space-x-2">
+      <Switch id="airplane-mode" className="" />
+    </div>
+  );
+}
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+export function UnreadToggle() {
+  const setShowUnread = useUIStore(useShallow((store) => store.setShowUnread));
+  const [state, setState] = useState(false);
+  useEffect(() => {
+    setShowUnread(state);
+  }, [setShowUnread, state]);
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="airplane-mode"
+            checked={state}
+            onCheckedChange={setState}
+          />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Toggle unread messages</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}

@@ -51,17 +51,17 @@ function EmailScreen({ children }) {
         Show ai
       </div>
       <div
-        className={`flex h-full flex-shrink-0 bg-slate-100 transition-all duration-1000 ease-in-out ${emailId && showAiSection ? "w-0 opacity-20" : emailId ? "w-4/12" : "w-full"} `}
+        className={`flex h-full flex-shrink-0 transition-all duration-1000 ease-in-out ${emailId && showAiSection ? "w-0 opacity-20" : emailId ? "w-0 lg:w-4/12" : "w-full"} `}
       >
         {children}
       </div>
       <div
-        className={`transition-all duration-1000 ease-in-out ${emailId ? "w-8/12" : "w-0 opacity-20"} min-w-0`}
+        className={`transition-all duration-1000 ease-in-out ${emailId && !showAiSection ? "w-full" : `w-0 ${emailId ? "" : "opacity-20"}`} min-w-0 lg:w-8/12`}
       >
         {staleEmailId && <EmailDisplayWrapper emailId={staleEmailId} />}
       </div>
       <div
-        className={`transition-all duration-1000 ease-in-out ${showAiSection ? "w-4/12" : "w-0 opacity-20"} min-w-0`}
+        className={`transition-all duration-1000 ease-in-out ${showAiSection ? "w-full lg:w-4/12" : "w-0 opacity-20"} min-w-0`}
       >
         {staleShowAiSection && (
           <AiSectionLayout showSection={staleShowAiSection} />

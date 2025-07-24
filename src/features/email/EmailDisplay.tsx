@@ -29,8 +29,8 @@ function EmailDisplay({ emailId }) {
   const { toggleStarred } = useEmailMutations(listQueryKey);
 
   return (
-    <div className="h-full w-full overflow-hidden bg-amber-200">
-      <div className="flex w-full items-center justify-center bg-blue-200 p-2">
+    <div className="h-full w-full overflow-hidden">
+      <div className="flex w-full items-center justify-center bg-slate-800 p-2">
         <Star
           fill={email?.is_starred ? "yellow" : "none"}
           onClick={() => toggleStarred(email)}

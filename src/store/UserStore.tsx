@@ -15,6 +15,8 @@ export const useUIStore = create<UIState>((set) => ({
   selectedLabel: "All",
   selectedAccountId: null,
   isComposeOpen: false,
+  userData: undefined,
+  setUserData: (userData) => set({ userData }),
   setSelectedEmailAccountIds: (emailIds) =>
     set({ selectedEmailAccountIds: emailIds }),
   selectAccount: (accountId) => set({ selectedAccountId: accountId }),

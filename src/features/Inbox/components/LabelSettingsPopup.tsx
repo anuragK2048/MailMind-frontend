@@ -1,172 +1,299 @@
+"use client";
+
 import { createLabel, deleteLabel, updateLabel } from "@/api/labelsApi";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Settings2Icon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowLeft,
+  Edit,
+  MoreHorizontal,
+  Settings2Icon,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 
-function LabelSettingsPopup({ labels }) {
+// The main dialog component that users will interact with.
+export default function LabelSettingsDialog({ labels }) {
+  const [view, setView] = useState("list"); // 'list' or 'form'
+  const [currentLabel, setCurrentLabel] = useState(null); // Holds the label being edited
+
   const queryClient = useQueryClient();
+
   const deleteMutation = useMutation({
-    mutationKey: ["userLabels"],
     mutationFn: deleteLabel,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["userLabels"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userLabels"] });
+    },
   });
-  const [showAddLabelPopup, setShowAddLabelPopup] = useState(false);
-  const [labelContent, setLabelContent] = useState(null);
-  function resetPopup() {
-    setShowAddLabelPopup(false);
-    setLabelContent(null);
-  }
-  function handleEditPopup(labelValues) {
-    setShowAddLabelPopup(true);
-    setLabelContent(labelValues);
-  }
+
+  const handleEdit = (label) => {
+    setCurrentLabel(label);
+    setView("form");
+  };
+
+  const handleAddNew = () => {
+    setCurrentLabel(null); // Ensure we're not editing
+    setView("form");
+  };
+
+  const resetView = () => {
+    setView("list");
+    setCurrentLabel(null);
+  };
+
+  // Reset view when dialog is closed
+  const onOpenChange = (isOpen) => {
+    if (!isOpen) {
+      // Use a timeout to prevent the form from disappearing before the dialog closes
+      setTimeout(() => {
+        resetView();
+      }, 0);
+    }
+  };
+
+  // Define consistent animation variants for the sliding effect
+  const slideVariants = {
+    initial: { x: "100%", opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    exit: { x: "-100%", opacity: 0 },
+  };
+
+  const transition = { type: "spring", stiffness: 400, damping: 40 };
+
   return (
-    <Dialog>
-      <DialogTrigger>
-        <Settings2Icon />
+    <Dialog onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="icon">
+          <Settings2Icon className="h-4 w-4" />
+        </Button>
       </DialogTrigger>
-      <DialogContent>
-        {showAddLabelPopup ? (
-          <AddLabelPopup resetPopup={resetPopup} currentValues={labelContent} />
-        ) : (
-          <div className="flex flex-col gap-4">
-            <div>
-              <div>These are current labels</div>
-            </div>
-            <div className="flex flex-col gap-2">
-              {labels?.map((val) => (
-                <div key={val.id} className="group flex gap-10">
-                  <div>{val.name}</div>
-                  <div>This is a description</div>
-                  <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
-                    <button
-                      className="text-blue-500 hover:underline"
-                      data-id={`${val.id}`}
-                      onClick={() => handleEditPopup(val)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="text-red-500 hover:underline"
-                      onClick={() => deleteMutation.mutate(val.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div>
-              <Button onClick={() => setShowAddLabelPopup(true)}>
-                Add a label
-              </Button>
-            </div>
-          </div>
-        )}
+      <DialogContent className="p-0 sm:max-w-[480px]">
+        {/*
+          This container will now smoothly animate its height changes thanks to the `layout` prop.
+        */}
+        <motion.div
+          layout
+          transition={transition}
+          className="overflow-x-hidden"
+        >
+          {/*
+            FIX: Added `mode="wait"` to ensure only one component is rendered at a time during animation.
+          */}
+          <AnimatePresence initial={false} mode="popLayout">
+            {view === "list" ? (
+              <motion.div
+                key="list"
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={transition}
+              >
+                <LabelList
+                  labels={labels}
+                  onEdit={handleEdit}
+                  onDelete={(id) => deleteMutation.mutate(id)}
+                  onAddNew={handleAddNew}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="form"
+                variants={slideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={transition}
+              >
+                <LabelForm currentLabel={currentLabel} onBack={resetView} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </DialogContent>
     </Dialog>
   );
 }
 
-export default LabelSettingsPopup;
+// --- Internal Sub-Components for Clarity ---
 
-function AddLabelPopup({ resetPopup, currentValues = null }) {
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationKey: ["userLabels"],
-    mutationFn: createLabel,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["userLabels"] }),
-  });
-  const updateMutation = useMutation({
-    mutationKey: ["userLabels"],
-    mutationFn: updateLabel,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["userLabels"] }),
-  });
-  const [name, setName] = useState(currentValues ? currentValues.name : "");
-  const [color, setColor] = useState(
-    currentValues ? currentValues.color : "#000000"
+/**
+ * Renders the list of current labels.
+ */
+function LabelList({ labels, onEdit, onDelete, onAddNew }) {
+  return (
+    <>
+      <DialogHeader className="p-6 pb-4">
+        <DialogTitle>Manage Labels</DialogTitle>
+      </DialogHeader>
+      <div className="flex flex-col gap-2 p-6 pt-0">
+        <div className="flex max-h-[400px] flex-col gap-3 overflow-y-auto pr-2">
+          {labels?.length > 0 ? (
+            labels.map((label) => (
+              <div
+                key={label.id}
+                className="flex items-center justify-between gap-4 rounded-md border p-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className="h-3 w-3 flex-shrink-0 rounded-full"
+                    style={{ backgroundColor: label.color }}
+                  />
+                  <div className="flex-grow">
+                    <p className="text-sm font-semibold">{label.name}</p>
+                    {label.description && (
+                      <p className="text-xs">{label.description}</p>
+                    )}
+                  </div>
+                </div>
+                {/* Mobile-friendly Dropdown Menu for actions */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 flex-shrink-0"
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => onEdit(label)}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      <span>Edit</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => onDelete(label.id)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      <span>Delete</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ))
+          ) : (
+            <p className="py-8 text-center text-sm text-gray-500">
+              You have no labels yet.
+            </p>
+          )}
+        </div>
+        <Button onClick={onAddNew} className="mt-4">
+          Add a new label
+        </Button>
+      </div>
+    </>
   );
-  const [prompt, setPrompt] = useState("");
-  const [description, setDescription] = useState("");
+}
 
-  const handleAddLabel = () => {
-    const labelData = {
-      name,
-      color,
-      //   prompt,
-      //   description,
-    };
-    if (currentValues) {
-      // then edit
-      updateMutation.mutate({ labelId: currentValues.id, updates: labelData });
+/**
+ * Renders the form for creating or editing a label.
+ */
+function LabelForm({ currentLabel, onBack }) {
+  const queryClient = useQueryClient();
+  const [name, setName] = useState(currentLabel?.name || "");
+  const [color, setColor] = useState(currentLabel?.color || "#000000");
+  const [description, setDescription] = useState(
+    currentLabel?.description || ""
+  );
+
+  const createMutation = useMutation({
+    mutationFn: createLabel,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userLabels"] });
+      onBack();
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateLabel,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userLabels"] });
+      onBack();
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const labelData = { name, color, description };
+    if (currentLabel) {
+      updateMutation.mutate({ labelId: currentLabel.id, updates: labelData });
     } else {
-      mutate(labelData);
+      createMutation.mutate(labelData);
     }
-    resetPopup();
   };
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-4 rounded-xl bg-white p-4 shadow">
-      <ArrowLeft onClick={resetPopup} />
-      <h2 className="text-xl font-semibold text-gray-800">Add New Label</h2>
-
-      <div className="space-y-1">
-        <label className="block text-sm font-medium text-gray-700">Name</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-md border px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
-        />
-      </div>
-
-      <div className="space-y-1">
-        <label className="block text-sm font-medium text-gray-700">Color</label>
-        <input
-          type="color"
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-          className="h-8 w-12 rounded border-2 border-gray-300"
-        />
-      </div>
-
-      <div className="space-y-1">
-        <label className="block text-sm font-medium text-gray-700">
-          Prompt
-        </label>
-        <input
-          type="text"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="w-full rounded-md border px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
-        />
-      </div>
-
-      <div className="space-y-1">
-        <label className="block text-sm font-medium text-gray-700">
-          Description
-        </label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full rounded-md border px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
-          rows={3}
-        />
-      </div>
-
-      <div className="text-right">
-        <button
-          onClick={handleAddLabel}
-          className="rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+    <>
+      <DialogHeader className="flex-row items-center p-6 pb-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="mr-2 h-8 w-8"
+          onClick={onBack}
         >
-          Add
-        </button>
-      </div>
-    </div>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <DialogTitle>
+          {currentLabel ? "Edit Label" : "Create New Label"}
+        </DialogTitle>
+      </DialogHeader>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6 pt-0">
+        <div className="space-y-2">
+          <Label htmlFor="name">Name</Label>
+          <Input
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="description">Description (Optional)</Label>
+          <Textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="color">Color</Label>
+          <Input
+            id="color"
+            type="color"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            className="h-10 w-16 p-1"
+          />
+        </div>
+        <div className="mt-4 flex justify-end">
+          <Button
+            type="submit"
+            disabled={updateMutation.isLoading || createMutation.isLoading}
+          >
+            {currentLabel ? "Update Label" : "Create Label"}
+          </Button>
+        </div>
+      </form>
+    </>
   );
 }

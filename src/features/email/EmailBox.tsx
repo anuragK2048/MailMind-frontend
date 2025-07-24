@@ -117,7 +117,7 @@ function EmailBox({
   const toggleExpand = () => setExpanded(!expanded);
 
   return (
-    <div className="flex h-full flex-grow flex-col rounded-lg bg-white shadow-md">
+    <div className="flex h-full flex-grow flex-col rounded-lg shadow-md">
       {/* Email Header */}
       <div className="border-b border-gray-200 p-4">
         <div className="mb-2 flex items-center justify-between">

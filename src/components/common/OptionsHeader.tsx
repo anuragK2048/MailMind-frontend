@@ -1,6 +1,9 @@
 import { getCurrentUser } from "@/api/userApi";
+import Avatars from "@/components/common/AccountSelection";
+import TestComp from "@/components/common/TestComp";
 import { useUIStore } from "@/store/UserStore";
 import { useQuery } from "@tanstack/react-query";
+import { Pen, Search, ToggleLeft } from "lucide-react";
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 
@@ -32,8 +35,8 @@ function OptionsHeader() {
   }, []);
 
   return (
-    <div className="ml-10 flex gap-4">
-      {userEmailsData?.map((val) => (
+    <div className="flex w-full items-center justify-between gap-4">
+      {/* {userEmailsData?.map((val) => (
         <div
           key={val.id}
           // onClick={() => setSelectedEmailAccountIds([val.id])}
@@ -44,7 +47,13 @@ function OptionsHeader() {
         >
           {val.gmail_address}
         </div>
-      ))}
+      ))} */}
+      <Avatars />
+      <div className="flex items-center justify-center gap-4">
+        <ToggleLeft />
+        <Search />
+        <Pen />
+      </div>
     </div>
   );
 }

@@ -6,8 +6,11 @@ import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 function ProtectedRoute({ children }) {
-  const setSelectedEmailAccountIds = useUIStore(
-    useShallow((store) => store.setSelectedEmailAccountIds)
+  const { setSelectedEmailAccountIds, setUserData } = useUIStore(
+    useShallow((store) => ({
+      setSelectedEmailAccountIds: store.setSelectedEmailAccountIds,
+      setUserData: store.setUserData,
+    }))
   );
   const {
     data: userData,
@@ -25,7 +28,9 @@ function ProtectedRoute({ children }) {
     if (primary) {
       setSelectedEmailAccountIds([primary.id]);
     }
-  }, [userData, setSelectedEmailAccountIds]);
+    console.log(userData);
+    setUserData(userData);
+  }, [userData, setSelectedEmailAccountIds, setUserData]);
 
   let component = null;
   if (isLoading) component = <Loader />;

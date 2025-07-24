@@ -1,11 +1,27 @@
 import { getLabelOptions } from "@/api/labelsApi";
+import { SelectDemo } from "@/components/common/Select";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import LabelSettingsPopup from "@/features/Inbox/components/LabelSettingsPopup";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import { Link, Navigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, Navigate, useNavigate, useParams } from "react-router";
 
 function LabelOptions() {
   const { emailId } = useParams();
+  const { labelId } = useParams();
+  const navigate = useNavigate();
+  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState("");
   const {
     data: labels,
     isLoading,
@@ -14,33 +30,58 @@ function LabelOptions() {
     queryKey: ["userLabels"],
     queryFn: getLabelOptions,
   });
+
   if (isLoading) return <Loader />;
   if (error) return <div>{error.message}</div>;
-  // if (labels) return <Navigate to={`${labels[0]?.id}`} />;
+  const allLabelOptions = [
+    ...(labels || []),
+    { id: "other", name: "Other" },
+    { id: "all", name: "All" },
+  ];
   return (
-    <div className="flex w-full items-center gap-10 overflow-x-auto bg-slate-500 text-2xl">
-      {labels?.map((val) => (
-        <Link
-          to={`/inbox/${val.id}${emailId ? `/${emailId}` : ""}`}
-          key={val.id}
-          className="py-2 whitespace-nowrap"
+    <div className="@container">
+      <div className="hidden w-full items-center gap-14 overflow-x-auto text-3xl @5xl:flex">
+        {allLabelOptions?.map((val) => (
+          <Link
+            to={`/inbox/${val.id}${emailId ? `/${emailId}` : ""}`}
+            key={val.id}
+            className={`${labelId === val.id ? "text-accent-foreground" : "text-accent-foreground/50"} py-2 whitespace-nowrap`}
+          >
+            {val.name}
+          </Link>
+        ))}
+        <LabelSettingsPopup labels={labels} />
+      </div>
+      <div className="flex px-2 @5xl:hidden">
+        <Select
+          // The value is ALWAYS the string ID from the URL param
+          value={labelId}
+          // The onValueChange handler will navigate to the new URL
+          onValueChange={(newLabelId) => {
+            // This assumes react-router is set up to handle this navigation
+            navigate(`/inbox/${newLabelId}${emailId ? `/${emailId}` : ""}`);
+            // window.location.href = `/inbox/${newLabelId}${emailId ? `/${emailId}` : ""}`; // Simple redirect
+          }}
         >
-          {val.name}
-        </Link>
-      ))}
-      <Link
-        to={`/inbox/other${emailId ? `/${emailId}` : ""}`}
-        className="py-2 whitespace-nowrap"
-      >
-        Other
-      </Link>
-      <Link
-        to={`/inbox/all${emailId ? `/${emailId}` : ""}`}
-        className="py-2 whitespace-nowrap"
-      >
-        All
-      </Link>
-      <LabelSettingsPopup labels={labels} />
+          <SelectTrigger className="min-h-[50px] w-full text-lg">
+            <SelectValue placeholder="Select a category..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Labels</SelectLabel>
+              {allLabelOptions.map((label) => (
+                <SelectItem
+                  key={label.id}
+                  value={label.id}
+                  className="text-md py-3"
+                >
+                  {label.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 }

@@ -19,12 +19,12 @@ export default function AppLayout() {
   return (
     <SidebarProvider className="flex h-full w-full">
       <AppSidebar />
-      <main className="flex h-full min-w-0 flex-1 flex-col bg-slate-200">
-        <div className="flex h-[60px] shrink-0 items-center">
-          <SidebarTrigger />
+      <main className="flex h-full min-w-0 flex-1 flex-col">
+        <div className="flex h-[70px] shrink-0 items-end px-4 md:px-12 lg:px-20">
+          {/* <SidebarTrigger /> */}
           <OptionsHeader />
         </div>
-        <div className="relative z-0 flex-1 overflow-hidden bg-slate-400 p-4 px-12">
+        <div className="relative z-0 flex-1 overflow-hidden px-4 pb-4 md:px-12 lg:px-20">
           <Outlet />
         </div>
       </main>

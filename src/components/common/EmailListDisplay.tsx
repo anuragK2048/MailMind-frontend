@@ -90,7 +90,7 @@ function EmailListDisplay() {
       <div className="@container flex h-full w-full flex-col gap-2 overflow-y-auto bg-background pt-4 text-lg">
         {data?.pages?.map((page, index) =>
           page.emails
-            // .filter((val) => val.is_unread === showUnread)
+            .filter((val) => (showUnread ? val.is_unread === showUnread : true))
             .map((val, i) => {
               const isLastElement =
                 index === data.pages.length - 1 && i === page.emails.length - 1;

@@ -1,4 +1,4 @@
-export default function Avatar({ src, name, size = "w-10 h-10" }) {
+export default function CustomAvatar({ src, name, size = "w-10 h-10" }) {
   if (src) {
     return (
       <img

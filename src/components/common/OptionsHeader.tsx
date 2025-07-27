@@ -20,20 +20,6 @@ function OptionsHeader() {
     select: (user) => user.gmail_accounts,
   });
 
-  useEffect(() => {
-    async function createLabel() {
-      const res = await fetch("http://localhost:3000/api/v1/labels", {
-        // headers: {
-        //   "Content-Type": "application/json",
-        // },
-        // method: "POST",
-        credentials: "include",
-        // body: JSON.stringify({ name: "Test Label 2", color: "#ffffff" }),
-      });
-    }
-    createLabel();
-  }, []);
-
   return (
     <div className="flex w-full items-center justify-between gap-4">
       {/* {userEmailsData?.map((val) => (
@@ -51,8 +37,10 @@ function OptionsHeader() {
       <Avatars />
       <div className="flex items-center justify-center gap-4">
         <UnreadToggle />
-        <Search />
-        <Pen />
+        <div className="flex gap-4 opacity-30">
+          <Search />
+          <Pen />
+        </div>
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { handleAddNewAccount } from "@/api/userApi";
 
 export default function Avatars() {
   const {
@@ -68,7 +69,6 @@ export default function Avatars() {
       .filter(Boolean);
     setSelectedEmailAccounts(selected);
   }, [selectedEmailAccountIds, connectedGmailAccounts]);
-  console.log(selectedEmailAccounts);
 
   function removeSelectedAccount(accountId) {
     if (selectedEmailAccountIds.length > 1) {
@@ -82,7 +82,6 @@ export default function Avatars() {
   }
 
   function addSelectedAccount(accountId) {
-    console.log(accountId);
     setIsDropDownOpen(false);
     setSelectedEmailAccountIds([...selectedEmailAccountIds, accountId]);
   }
@@ -125,7 +124,6 @@ export default function Avatars() {
                       <DropdownMenuItem
                         key={account.id}
                         onClickCapture={(e) => {
-                          console.log("hi");
                           e.stopPropagation();
                           addSelectedAccount(account.id);
                         }}
@@ -148,10 +146,7 @@ export default function Avatars() {
                       <Button
                         className="h-5 w-full cursor-pointer"
                         variant={"link"}
-                        onClick={() =>
-                          (window.location.href =
-                            "http://localhost:3000/api/v1/auth/google/link")
-                        }
+                        onClick={handleAddNewAccount}
                       >
                         Add Another Account +
                       </Button>

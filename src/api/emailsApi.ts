@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const getEmailsByLabel = async (labelId) => {
   try {
@@ -79,7 +79,6 @@ export const getEmailsBySystemLabel = async (
   page,
   limit
 ) => {
-  console.log(page);
   const params = new URLSearchParams();
   params.append("page", page);
   params.append("limit", limit);
@@ -87,7 +86,6 @@ export const getEmailsBySystemLabel = async (
     params.append("emailAccountIds", element);
   });
   const queryString = params.toString();
-  console.log(queryString);
   try {
     const response = await fetch(
       `${API_BASE_URL}/api/v1/emails/system/${systemLabel}?${queryString}`,

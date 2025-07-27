@@ -142,16 +142,18 @@ function EmailListItem({ email, navigateTo, selectedEmailAccountIds }) {
       <div className="flex w-[90%] flex-col @5xl:flex-row">
         <div className="flex items-center gap-4 @5xl:min-w-[22%]">
           <div className="relative flex flex-col items-center justify-center gap-4 @5xl:flex-row">
-            {selectedEmailAccountIds.length > 0 && (
-              <div className="flex items-center">
-                <Avatar
-                  src={email.gmail_account.avatar_url}
-                  name={email.gmail_account.gmail_name}
-                  size="h-5 w-5"
-                />
-              </div>
-            )}
-            <div className="absolute top-9 flex items-center @5xl:static">
+            <div
+              className={`${selectedEmailAccountIds.length > 1 ? "" : "hidden"} flex items-center`}
+            >
+              <Avatar
+                src={email.gmail_account.avatar_url}
+                name={email.gmail_account.gmail_name}
+                size="h-5 w-5"
+              />
+            </div>
+            <div
+              className={`${selectedEmailAccountIds.length > 1 ? "top-9" : "left-1"} absolute flex items-center @5xl:static`}
+            >
               <div
                 className={`h-1.5 w-1.5 ${email?.is_unread ? "block" : "opacity-0"} rounded-full bg-blue-600`}
               ></div>
@@ -162,7 +164,9 @@ function EmailListItem({ email, navigateTo, selectedEmailAccountIds }) {
           </div>
         </div>
         <div className="flex w-[78%] gap-2 text-xl @5xl:pl-2">
-          <div className="ml-9 truncate font-medium whitespace-nowrap @4xl:overflow-visible @4xl:text-clip @5xl:ml-0">
+          <div
+            className={`${selectedEmailAccountIds.length > 1 ? "ml-9" : "ml-4"} truncate font-medium whitespace-nowrap @4xl:overflow-visible @4xl:text-clip @5xl:ml-0`}
+          >
             {email?.subject}
           </div>
           <div className="ml-4 hidden truncate pr-8 font-light whitespace-nowrap @5xl:block">

@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000"; // Your backend URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const getCurrentUser = async () => {
   const response = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
@@ -11,3 +11,51 @@ export const getCurrentUser = async () => {
 
   return response.json();
 };
+
+export async function handleLogout() {
+  const res = await fetch(`${API_BASE_URL}/api/v1/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+  const result = await res.json();
+  console.log(result);
+  if (result) {
+    window.location.href = `/`;
+  }
+}
+
+export async function handleDeleteAccount() {
+  const response = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (response.status == 200) {
+    window.location.href = "/";
+  }
+}
+
+export async function handleUnlinkAccount(accountId) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/gmail-accounts/${accountId}`,
+    {
+      method: "DELETE",
+      credentials: "include",
+    }
+  );
+  if (response.status == 200) {
+    window.location.href = "/inbox";
+  }
+}
+
+export function handleAddNewAccount() {
+  window.location.href = `${API_BASE_URL}/api/v1/auth/google/link`;
+}
+
+export function handleLogin() {
+  window.location.href = `${API_BASE_URL}/api/v1/auth/google`;
+}
+
+export function handleDemoLogin() {
+  console.log("HI");
+  window.location.href = `${API_BASE_URL}/api/v1/auth/demo`;
+}

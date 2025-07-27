@@ -1,3 +1,9 @@
+import {
+  handleAddNewAccount,
+  handleDeleteAccount,
+  handleLogout,
+  handleUnlinkAccount,
+} from "@/api/userApi";
 import AlertDialogue from "@/components/common/AlertDialogue";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
@@ -20,28 +26,8 @@ const sidebarItems = [
   { name: "Scheduled", path: "/scheduled" },
 ];
 
-async function handleLogout() {
-  const res = await fetch("http://localhost:3000/api/v1/auth/logout", {
-    method: "POST",
-    credentials: "include",
-  });
-  const result = await res.json();
-  console.log(result);
-}
-
-async function handleDeleteAccount() {
-  const response = await fetch("http://localhost:3000/api/v1/users/me", {
-    method: "DELETE",
-    credentials: "include",
-  });
-  if (response.status == 200) {
-    window.location.href = "/landing";
-  }
-}
-
 export function AppSidebar() {
   const userData = useUIStore((store) => store.userData);
-  const navigate = useNavigate();
   const { pathname } = useLocation();
   const [currentTab, setCurrentTab] = useState("/");
   // console.log(pathname);
@@ -50,19 +36,6 @@ export function AppSidebar() {
     const path = "/" + pathname.split("/")[1];
     setCurrentTab(path);
   }, [pathname]);
-
-  async function handleUnlinkAccount(accountId) {
-    const response = await fetch(
-      `http://localhost:3000/api/v1/gmail-accounts/${accountId}`,
-      {
-        method: "DELETE",
-        credentials: "include",
-      }
-    );
-    if (response.status == 200) {
-      navigate("/inbox");
-    }
-  }
 
   return (
     <Sidebar>
@@ -92,14 +65,7 @@ export function AppSidebar() {
         </div>
         {/* Footer */}
         <div className="flex flex-col gap-2">
-          <Button
-            onClick={() =>
-              (window.location.href =
-                "http://localhost:3000/api/v1/auth/google/link")
-            }
-          >
-            Add Account +
-          </Button>
+          <Button onClick={handleAddNewAccount}>Add Account +</Button>
 
           <AlertDialogue
             onContinue={handleLogout}
@@ -116,6 +82,7 @@ export function AppSidebar() {
             userData={userData}
           />
           <AlertDialogue
+            userData={userData}
             onContinue={handleDeleteAccount}
             description={
               "This action cannot be undone. This will permanently delete your account and remove your data from the server."

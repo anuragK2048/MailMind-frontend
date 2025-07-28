@@ -55,7 +55,7 @@ export function handleLogin() {
   window.location.href = `${API_BASE_URL}/api/v1/auth/google`;
 }
 
-export async function handleDemoLogin() {
+export async function handleDemoLogin(navigate) {
   // window.location.href = `${API_BASE_URL}/api/v1/auth/demo`;
   const res = await fetch(`${API_BASE_URL}/api/v1/auth/demo`, {
     method: "GET",
@@ -64,6 +64,6 @@ export async function handleDemoLogin() {
   const result = await res.json();
   console.log(result);
   if (res.status == 200) {
-    return true;
-  } else return false;
+    navigate("/inbox");
+  } else alert("Unable to login, server issue");
 }

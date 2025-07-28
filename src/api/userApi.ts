@@ -55,7 +55,15 @@ export function handleLogin() {
   window.location.href = `${API_BASE_URL}/api/v1/auth/google`;
 }
 
-export function handleDemoLogin() {
-  console.log("HI");
-  window.location.href = `${API_BASE_URL}/api/v1/auth/demo`;
+export async function handleDemoLogin() {
+  // window.location.href = `${API_BASE_URL}/api/v1/auth/demo`;
+  const res = await fetch(`${API_BASE_URL}/api/v1/auth/demo`, {
+    method: "GET",
+    credentials: "include",
+  });
+  const result = await res.json();
+  console.log(result);
+  if (res.status == 200) {
+    return true;
+  } else return false;
 }

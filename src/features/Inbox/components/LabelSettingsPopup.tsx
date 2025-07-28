@@ -1,6 +1,7 @@
 "use client";
 
 import { createLabel, deleteLabel, updateLabel } from "@/api/labelsApi";
+import { GlowEffect } from "@/components/motion-primitives/glow-effect";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,6 +30,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 // The main dialog component that users will interact with.
 export default function LabelSettingsDialog({ labels }) {
@@ -81,9 +83,21 @@ export default function LabelSettingsDialog({ labels }) {
   return (
     <Dialog onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Settings2Icon className="h-4 w-4" />
-        </Button>
+        <div className="relative h-11 w-11">
+          <GlowEffect
+            colors={["#0894FF", "#C959DD", "#FF2E54", "#FF9004"]}
+            mode="colorShift"
+            blur="medium"
+            className="top-1.5 mt-2 h-3"
+          />
+          <Button
+            variant="secondary"
+            size="icon"
+            className="border-0.5 relative h-10 w-10 rounded-lg border-foreground bg-background"
+          >
+            <Settings2Icon className="h-4 w-4 text-foreground" />
+          </Button>
+        </div>
       </DialogTrigger>
       <DialogContent className="p-0 sm:max-w-[480px]">
         {/*
@@ -233,6 +247,7 @@ function LabelForm({ currentLabel, onBack }) {
   });
 
   const handleSubmit = (e) => {
+    if (!currentLabel) toast(`Categorizing emails... It may take some time `);
     e.preventDefault();
     const labelData = { name, color, description };
     if (currentLabel) {
@@ -293,7 +308,6 @@ function LabelForm({ currentLabel, onBack }) {
           >
             {currentLabel ? "Update Label" : "Create Label"}
           </Button>
-          <div>It would take some time to categorize emails</div>
         </div>
       </form>
     </>

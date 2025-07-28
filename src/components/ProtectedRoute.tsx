@@ -3,6 +3,7 @@ import { useUIStore } from "@/store/UserStore";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { useEffect } from "react";
+import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
 function ProtectedRoute({ children }) {
@@ -22,16 +23,16 @@ function ProtectedRoute({ children }) {
   });
 
   useEffect(() => {
+    // check for is_sync_active
+    userData?.gmail_accounts?.forEach((account) => {
+      console.log(account);
+      if (account.is_sync_active)
+        toast(`Syncing emails for ${account.gmail_address}`);
+    });
     const allAccount = userData?.gmail_accounts?.map((val) => val.id);
     if (allAccount) {
       setSelectedEmailAccountIds(allAccount);
     }
-    // const primary = userData?.gmail_accounts.find(
-    //   (val) => val.type === "primary"
-    // );
-    // if (primary) {
-    //   setSelectedEmailAccountIds([primary.id]);
-    // }
     setUserData(userData);
   }, [userData, setSelectedEmailAccountIds, setUserData]);
 

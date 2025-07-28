@@ -20,8 +20,6 @@ function LabelOptions() {
   const { emailId } = useParams();
   const { labelId } = useParams();
   const navigate = useNavigate();
-  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState("");
   const {
     data: labels,
     isLoading,
@@ -40,7 +38,7 @@ function LabelOptions() {
   ];
   return (
     <div className="@container">
-      <div className="hidden w-full items-center gap-14 overflow-x-auto text-3xl @5xl:flex">
+      <div className="hidden w-full items-center gap-14 overflow-x-auto pt-2 text-3xl @5xl:flex">
         {allLabelOptions?.map((val) => (
           <Link
             to={`/inbox/${val.id}${emailId ? `/${emailId}` : ""}`}

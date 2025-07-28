@@ -167,7 +167,7 @@ function EmailBox({
       </div>
 
       {/* Action Buttons Footer */}
-      <div className="flex justify-end border-t border-accent-foreground/20 p-4">
+      <div className="mt-auto flex justify-end border-t border-accent-foreground/20 p-4">
         <div className="flex space-x-2 text-muted-foreground">
           <button className="flex cursor-pointer items-center rounded-full border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-muted hover:text-primary hover:shadow-sm">
             <Reply size={16} className="mr-2" />

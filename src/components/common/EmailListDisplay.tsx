@@ -4,6 +4,8 @@ import {
   getSelectedEmailsByLabel,
 } from "@/api/emailsApi";
 import Avatar from "@/components/common/Avatar";
+import { LoadingText } from "@/components/motion-primitives/LoadingText";
+import NoEmailFound from "@/components/motion-primitives/NoEmailFound";
 import LabelOptions from "@/features/Inbox/components/LabelOptions";
 import { useEmailMutations } from "@/hooks/useEmailMutations";
 import useSystemView from "@/hooks/useSystemView";
@@ -51,7 +53,7 @@ function EmailListDisplay() {
     data,
     error,
     fetchNextPage,
-    isLoading,
+    isPending,
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
@@ -84,7 +86,12 @@ function EmailListDisplay() {
   if (error) {
     console.error(error);
   }
-  if (isLoading) return <Loader />;
+  if (isPending) return <LoadingText displayText={"Loading emails..."} />;
+  if (labelId === "all" && data && data.pages.at(0).emails.length === 0)
+    return <LoadingText displayText={"Syncing emails"} />;
+  if (data && data.pages.at(0).emails.length === 0) return <NoEmailFound />;
+  console.log(data, "data");
+
   return (
     <>
       <div className="@container flex h-full w-full flex-col gap-2 overflow-y-auto bg-background pt-4 text-lg">
@@ -107,7 +114,7 @@ function EmailListDisplay() {
         )}
         {isFetchingNextPage && (
           <div className="flex justify-center">
-            <LoaderIcon />
+            <LoaderIcon className="animate-spin" />
           </div>
         )}
       </div>
@@ -170,7 +177,8 @@ function EmailListItem({ email, navigateTo, selectedEmailAccountIds }) {
             {email?.subject}
           </div>
           <div className="ml-4 hidden truncate pr-8 font-light whitespace-nowrap @5xl:block">
-            {wrapString(email?.snippet, 110 - email.subject?.length)}
+            {/* {wrapString(email?.snippet, 110 - email.subject?.length)} */}
+            {email?.snippet}
           </div>
         </div>
       </div>

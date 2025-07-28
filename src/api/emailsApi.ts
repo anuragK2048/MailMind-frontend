@@ -63,10 +63,10 @@ export const getSelectedEmailsByLabel = async (
       }
     );
     if (!response.ok) {
-      throw new Error("Failed to fetch email");
+      throw new Error("Failed to fetch emails");
     }
-    const email = await response.json();
-    return email;
+    const emails = await response.json();
+    return emails;
   } catch (err) {
     console.error(err);
     throw new Error(err);
@@ -95,10 +95,10 @@ export const getEmailsBySystemLabel = async (
       }
     );
     if (!response.ok) {
-      throw new Error("Failed to fetch email");
+      throw new Error("Failed to fetch emails");
     }
-    const email = await response.json();
-    return email;
+    const emails = await response.json();
+    return emails;
   } catch (err) {
     console.error(err);
     throw new Error(err);

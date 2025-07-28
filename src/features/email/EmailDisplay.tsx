@@ -52,7 +52,12 @@ function EmailDisplay({ emailId }) {
     }
   }, [toggleUnread, email]);
 
-  if (isLoading) return <LoaderIcon />;
+  if (isLoading)
+    return (
+      <div className="h-full w-full items-center justify-center">
+        <LoaderIcon className="animate-spin" />
+      </div>
+    );
   return (
     <div className="flex h-full w-full flex-col">
       <div className="flex h-[6%] w-full items-center justify-between p-2 px-4">

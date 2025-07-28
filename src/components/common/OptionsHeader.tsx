@@ -8,32 +8,8 @@ import { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 function OptionsHeader() {
-  const { selectedEmailAccountIds, setSelectedEmailAccountIds } = useUIStore(
-    useShallow((store) => ({
-      selectedEmailAccountIds: store.selectedEmailAccountIds,
-      setSelectedEmailAccountIds: store.setSelectedEmailAccountIds,
-    }))
-  );
-  const { data: userEmailsData, isLoading } = useQuery({
-    queryKey: ["userData"],
-    queryFn: getCurrentUser,
-    select: (user) => user.gmail_accounts,
-  });
-
   return (
     <div className="flex w-full items-center justify-between gap-4">
-      {/* {userEmailsData?.map((val) => (
-        <div
-          key={val.id}
-          // onClick={() => setSelectedEmailAccountIds([val.id])}
-          onDoubleClick={() =>
-            setSelectedEmailAccountIds([...selectedEmailAccountIds, val.id])
-          }
-          className={`${selectedEmailAccountIds.includes(val.id) ? "bg-amber-300" : ""}`}
-        >
-          {val.gmail_address}
-        </div>
-      ))} */}
       <Avatars />
       <div className="flex items-center justify-center gap-4">
         <UnreadToggle />
@@ -62,6 +38,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 export function UnreadToggle() {
   const setShowUnread = useUIStore(useShallow((store) => store.setShowUnread));

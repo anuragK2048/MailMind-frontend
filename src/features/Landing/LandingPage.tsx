@@ -64,6 +64,16 @@ const LandingPage = () => {
           </button>
         </div>
 
+        {/* --- Helper Text Section --- */}
+        <div className="mt-2 text-center">
+          <p className="text-sm font-bold text-gray-700">
+            The live demo uses cross-site cookies for authentication.
+            <br />
+            For the best experience, please use a standard browser window (not
+            Incognito or Safari).
+          </p>
+        </div>
+
         {/* Footer */}
         {/* <div className="mt-8 text-center">
           <p className="text-sm text-gray-500">

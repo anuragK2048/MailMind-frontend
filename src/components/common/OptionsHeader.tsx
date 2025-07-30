@@ -1,9 +1,6 @@
-import { getCurrentUser } from "@/api/userApi";
 import Avatars from "@/components/common/AccountSelection";
-import TestComp from "@/components/common/TestComp";
 import { useUIStore } from "@/store/UserStore";
-import { useQuery } from "@tanstack/react-query";
-import { Pen, Search, ToggleLeft } from "lucide-react";
+import { Pen, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
@@ -38,7 +35,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { toast } from "sonner";
 
 export function UnreadToggle() {
   const setShowUnread = useUIStore(useShallow((store) => store.setShowUnread));

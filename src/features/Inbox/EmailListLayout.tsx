@@ -4,8 +4,10 @@ import LabelOptions from "@/features/Inbox/components/LabelOptions";
 
 function EmailListLayout() {
   return (
-    <div className="flex h-full w-full flex-col">
-      <LabelOptions />
+    <div className="@container flex h-full w-full flex-col">
+      <div className="">
+        <LabelOptions />
+      </div>
       <EmailListDisplay />
     </div>
   );

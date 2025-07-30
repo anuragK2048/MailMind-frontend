@@ -17,11 +17,11 @@ export default function AppLayout() {
       <AppSidebar />
       <main className="relative flex h-full min-w-0 flex-1 flex-col">
         <Toaster />
-        <SidebarTrigger className="absolute z-50" />
-        <div className="relative flex h-[70px] shrink-0 items-end px-4 md:px-12 lg:px-20">
+        <SidebarTrigger className="absolute top-5.5 left-2 z-50 md:top-0 md:left-0" />
+        <div className="relative mt-2 ml-8 flex shrink-0 items-center justify-center px-4 md:ml-0 md:px-12 lg:px-20">
           <OptionsHeader />
         </div>
-        <div className="relative z-0 flex-1 overflow-hidden px-4 pb-4 md:px-12 lg:px-20">
+        <div className="relative z-0 w-full flex-1 overflow-hidden px-4 pb-4 md:px-12 lg:px-20">
           <Outlet />
         </div>
       </main>

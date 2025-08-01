@@ -1,69 +1,82 @@
-# React + TypeScript + Vite
+# MailMind Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+MailMind is an intelligent, modern email client designed to bring clarity and efficiency to your inbox. This frontend is built with React, Vite, and TypeScript, offering a fast, responsive, and feature-rich user experience.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Google OAuth Integration**: Securely log in and link multiple Gmail accounts.
+- **Unified Inbox**: View and manage emails from all connected accounts in one place.
+- **Smart Labeling**:
+  - Create, edit, and delete custom labels with unique colors.
+  - Use natural language prompts to have AI automatically categorize incoming emails.
+- **Real-Time Sync**: Keeps your inbox up-to-date with the latest emails.
+- **System Views**: Quickly access important emails with dedicated views for Starred, Sent, Drafts, Spam, and Archived (Done).
+- **Optimistic UI Updates**: Actions like starring, archiving, and marking as read are reflected instantly for a seamless experience.
+- **Infinite Scroll**: Effortlessly browse through long lists of emails.
+- **Responsive Design**: A fully responsive interface that works beautifully on both desktop and mobile devices.
+- **Light & Dark Mode**: Switch between themes to suit your preference.
+- **Protected Routes**: Ensures that your email data is secure and only accessible when you are logged in.
 
-## Expanding the ESLint configuration
+## 🚀 Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Framework**: [React](https://react.dev/) with [Vite](https://vitejs.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) for utility-first styling.
+- **UI Components**: Built with [shadcn/ui](https://ui.shadcn.com/) and [Radix UI](https://www.radix-ui.com/) for accessible and composable components.
+- **State Management**:
+  - [TanStack Query (React Query)](https://tanstack.com/query/latest) for server state management, caching, and data fetching.
+  - [Zustand](https://zustand-demo.pmnd.rs/) for lightweight global client state.
+- **Routing**: [React Router](https://reactrouter.com/) for client-side routing.
+- **Animations**: [Framer Motion](https://www.framer.com/motion/) for smooth and delightful animations.
+- **Linting/Formatting**: ESLint and Prettier for code quality and consistency.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## ⚙️ Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+Follow these instructions to get the project up and running on your local machine.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v22 or higher recommended)
+- [npm](https://www.npmjs.com/) or a compatible package manager
+
+### Installation
+
+1.  **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/anuragK2048/MailMind-frontend.git
+    cd MailMind-frontend
+    ```
+
+2.  **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+3.  **Set up environment variables:**
+
+    Create a `.env` file in the root of the project and add the following variable. This should point to the URL of your backend server.
+
+    ```env
+    VITE_API_BASE_URL=http://localhost:8000
+    ```
+
+### Running the Application
+
+Once the installation is complete, you can run the development server:
+
+```bash
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This will start the application, and you can view it in your browser at `http://localhost:5173` (or another port if 5173 is in use).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📜 Available Scripts
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+This project includes the following scripts defined in `package.json`:
+
+- `npm run dev`: Starts the development server with Hot Module Replacement (HMR).
+- `npm run build`: Compiles and bundles the application for production.
+- `npm run lint`: Lints the codebase using ESLint to find and fix problems.
+- `npm run preview`: Starts a local server to preview the production build.
